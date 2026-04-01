@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import Layout from "@/components/layout";
 import { useApiGet } from "@/lib/api";
 import { getUser } from "@/lib/auth";
-import { Download, Printer, Star, Zap, Award, Briefcase, Code2, Users, BookOpen, Loader2 } from "lucide-react";
+import { Download, Printer, Zap, Award, Briefcase, Code2, Users, Loader2 } from "lucide-react";
 
 interface ResumeData {
   student: { name: string; usn: string; branch: string | null; email: string | null; phone: string | null; role: string; } | null;

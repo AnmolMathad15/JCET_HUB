@@ -4,7 +4,7 @@ import {
   eventsTable, eventRegistrationsTable, campusPointsTable,
   studentBadgesTable, badgeDefinitionsTable, usersTable
 } from "@workspace/db/schema";
-import { eq, desc, asc, sql, and, ne } from "drizzle-orm";
+import { eq, desc, asc, sql, and } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth";
 import { randomUUID } from "crypto";
 import { broadcastEventRegistration, broadcastAttendanceUpdate } from "../socket";
@@ -65,7 +65,7 @@ async function awardPointsAndBadges(studentId: string, eventId: string, points: 
 router.get("/events-hub", requireAuth, async (req, res) => {
   try {
     const events = await db.select().from(eventsTable).orderBy(desc(eventsTable.createdAt));
-    const userId = (req as any).user?.id;
+    const userId = (req as any).currentUser?.id;
     if (!userId) { res.json(events); return; }
 
     const myRegs = await db.select({ eventId: eventRegistrationsTable.eventId, attended: eventRegistrationsTable.attended })
@@ -93,7 +93,7 @@ router.get("/events-hub", requireAuth, async (req, res) => {
 
 router.post("/events-hub", requireAuth, async (req, res) => {
   try {
-    const user = (req as any).user;
+    const user = (req as any).currentUser;
     if (!user || (user.role !== "faculty" && user.role !== "admin")) {
       res.status(403).json({ error: "Faculty/Admin only" }); return;
     }
@@ -121,7 +121,7 @@ router.post("/events-hub", requireAuth, async (req, res) => {
 
 router.put("/events-hub/:id", requireAuth, async (req, res) => {
   try {
-    const user = (req as any).user;
+    const user = (req as any).currentUser;
     if (!user || (user.role !== "faculty" && user.role !== "admin")) {
       res.status(403).json({ error: "Faculty/Admin only" }); return;
     }
@@ -146,7 +146,7 @@ router.put("/events-hub/:id", requireAuth, async (req, res) => {
 
 router.delete("/events-hub/:id", requireAuth, async (req, res) => {
   try {
-    const user = (req as any).user;
+    const user = (req as any).currentUser;
     if (!user || user.role !== "admin") { res.status(403).json({ error: "Admin only" }); return; }
     await db.delete(eventsTable).where(eq(eventsTable.id, req.params.id));
     res.json({ success: true });
@@ -157,7 +157,7 @@ router.delete("/events-hub/:id", requireAuth, async (req, res) => {
 
 router.post("/events-hub/:id/register", requireAuth, async (req, res) => {
   try {
-    const user = (req as any).user;
+    const user = (req as any).currentUser;
     if (!user) { res.status(401).json({ error: "Auth required" }); return; }
 
     const event = await db.select().from(eventsTable).where(eq(eventsTable.id, req.params.id)).limit(1);
@@ -209,7 +209,7 @@ router.post("/events-hub/:id/register", requireAuth, async (req, res) => {
 
 router.delete("/events-hub/:id/register", requireAuth, async (req, res) => {
   try {
-    const user = (req as any).user;
+    const user = (req as any).currentUser;
     await db.delete(eventRegistrationsTable)
       .where(and(eq(eventRegistrationsTable.eventId, req.params.id), eq(eventRegistrationsTable.studentId, user.id)));
     const newCount = await db.select({ c: sql<number>`count(*)` }).from(eventRegistrationsTable).where(eq(eventRegistrationsTable.eventId, req.params.id));
@@ -222,7 +222,7 @@ router.delete("/events-hub/:id/register", requireAuth, async (req, res) => {
 
 router.get("/events-hub/:id/registrations", requireAuth, async (req, res) => {
   try {
-    const user = (req as any).user;
+    const user = (req as any).currentUser;
     if (!user || (user.role !== "faculty" && user.role !== "admin")) {
       res.status(403).json({ error: "Faculty/Admin only" }); return;
     }
@@ -237,7 +237,7 @@ router.get("/events-hub/:id/registrations", requireAuth, async (req, res) => {
 
 router.post("/events-hub/:id/attendance/:regId", requireAuth, async (req, res) => {
   try {
-    const user = (req as any).user;
+    const user = (req as any).currentUser;
     if (!user || (user.role !== "faculty" && user.role !== "admin")) {
       res.status(403).json({ error: "Faculty/Admin only" }); return;
     }
@@ -308,7 +308,7 @@ router.get("/leaderboard", requireAuth, async (req, res) => {
 
 async function achievementsHandler(req: any, res: any) {
   try {
-    const user = req.user;
+    const user = req.currentUser;
     const targetId = req.params.studentId ?? user?.id;
     if (!targetId) { res.status(400).json({ error: "Student ID required" }); return; }
 
@@ -348,7 +348,7 @@ router.get("/achievements/:studentId", requireAuth, achievementsHandler);
 
 router.get("/resume-data", requireAuth, async (req, res) => {
   try {
-    const user = (req as any).user;
+    const user = (req as any).currentUser;
     if (!user) { res.status(401).json({ error: "Auth required" }); return; }
 
     const [registrations, badgeData, points, userInfo] = await Promise.all([

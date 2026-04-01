@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "wouter";
 import Layout from "@/components/layout";
 import { useApiGet, apiFetch } from "@/lib/api";
@@ -837,7 +837,11 @@ export default function EventsHub() {
                 )}
                 <div className="bg-gray-50 rounded-xl p-3 text-center">
                   <Users className="w-4 h-4 text-[#1a237e] mx-auto mb-1" />
-                  <div className="text-xs font-bold text-gray-800">{selectedEvent.registrationCount}{selectedEvent.capacity ? `/${selectedEvent.capacity}` : ""}</div>
+                  <div className="text-xs font-bold text-gray-800 flex items-center justify-center gap-1">
+                    {countOverrides[selectedEvent.id] ?? selectedEvent.registrationCount}
+                    {selectedEvent.capacity ? `/${selectedEvent.capacity}` : ""}
+                    {socketConnected && <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse inline-block" title="Live" />}
+                  </div>
                   <div className="text-[10px] text-gray-400">Registered</div>
                 </div>
                 {selectedEvent.deadline && (
