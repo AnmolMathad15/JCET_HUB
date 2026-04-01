@@ -5,7 +5,7 @@ import {
   studentBadgesTable, badgeDefinitionsTable, usersTable
 } from "@workspace/db/schema";
 import { eq, desc, asc, sql, and, inArray } from "drizzle-orm";
-import { requireAuth } from "../middlewares/auth";
+import { requireAuth, optionalAuth } from "../middlewares/auth";
 import { randomUUID } from "crypto";
 import { broadcastEventRegistration, broadcastAttendanceUpdate } from "../socket";
 
@@ -62,7 +62,7 @@ async function awardPointsAndBadges(studentId: string, eventId: string, points: 
   }
 }
 
-router.get("/events-hub", requireAuth, async (req, res) => {
+router.get("/events-hub", optionalAuth, async (req, res) => {
   try {
     const events = await db.select().from(eventsTable).orderBy(desc(eventsTable.createdAt));
     const userId = (req as any).currentUser?.id;
@@ -265,7 +265,7 @@ router.post("/events-hub/:id/attendance/:regId", requireAuth, async (req, res) =
   }
 });
 
-router.get("/leaderboard", requireAuth, async (req, res) => {
+router.get("/leaderboard", optionalAuth, async (req, res) => {
   try {
     const rows = await db.select({
       studentId: campusPointsTable.studentId,
