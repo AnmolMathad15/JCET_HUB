@@ -24,6 +24,17 @@ interface EventItem {
   isRegistered: boolean; attended: boolean; registrationCount: number; createdAt: string | null;
 }
 
+const FALLBACK_EVENTS: EventItem[] = [
+  { id: "fb-1", title: "HackJCET 2026 — 24-Hour Hackathon", description: "Build, innovate, and win at JCET's annual 24-hour hackathon. Open to all students.", date: "2026-04-10", type: "hackathon", venue: "CS Block Auditorium", posterUrl: null, capacity: 100, deadline: null, organizerName: "CSE Department", xpReward: 200, status: "upcoming", registrationOpen: true, tags: "coding,hackathon,innovation", domain: "technical", registrationFee: 0, requiresPayment: false, isTeamEvent: true, maxTeamSize: 4, isRegistered: false, attended: false, registrationCount: 47, createdAt: null },
+  { id: "fb-2", title: "Utsav 2026 — JCET Cultural Fest", description: "Celebrate creativity at JCET's biggest cultural event — music, dance, drama and art.", date: "2026-04-15", type: "cultural", venue: "Open Amphitheater", posterUrl: null, capacity: 500, deadline: null, organizerName: "Student Council", xpReward: 100, status: "upcoming", registrationOpen: true, tags: "cultural,music,dance", domain: "cultural", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 123, createdAt: null },
+  { id: "fb-3", title: "AWS Cloud Computing Workshop", description: "Hands-on cloud workshop with AWS architecture, serverless, and certification guidance.", date: "2026-04-17", type: "workshop", venue: "Computer Lab 3", posterUrl: null, capacity: 60, deadline: null, organizerName: "Training & Placement", xpReward: 150, status: "upcoming", registrationOpen: true, tags: "cloud,aws,workshop", domain: "technical", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 38, createdAt: null },
+  { id: "fb-4", title: "JCET Sports Day 2026", description: "Annual inter-department sports championship. Cricket, football, athletics and more.", date: "2026-04-22", type: "sports", venue: "Sports Ground", posterUrl: null, capacity: 200, deadline: null, organizerName: "Physical Education", xpReward: 75, status: "upcoming", registrationOpen: true, tags: "sports,athletics", domain: "sports", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 89, createdAt: null },
+  { id: "fb-5", title: "AI/ML Industry Expert Talk", description: "Industry experts share insights on Machine Learning careers and AI applications.", date: "2026-04-19", type: "academic", venue: "Seminar Hall A", posterUrl: null, capacity: 150, deadline: null, organizerName: "AIML Department", xpReward: 60, status: "upcoming", registrationOpen: true, tags: "AI,ML,career", domain: "academic", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 62, createdAt: null },
+  { id: "fb-6", title: "Web Dev Bootcamp — React & Node.js", description: "Intensive 2-day bootcamp on modern full-stack web development with React and Node.js.", date: "2026-05-02", type: "workshop", venue: "IT Lab", posterUrl: null, capacity: 40, deadline: null, organizerName: "IEEE Student Branch", xpReward: 180, status: "upcoming", registrationOpen: true, tags: "react,nodejs,webdev", domain: "technical", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 29, createdAt: null },
+  { id: "fb-7", title: "Cybersecurity CTF Challenge", description: "Test your cybersecurity skills in this capture-the-flag competition open to all.", date: "2026-05-05", type: "technical", venue: "Network Lab", posterUrl: null, capacity: 80, deadline: null, organizerName: "ISE Department", xpReward: 160, status: "upcoming", registrationOpen: true, tags: "security,ctf,hacking", domain: "technical", registrationFee: 0, requiresPayment: false, isTeamEvent: true, maxTeamSize: 3, isRegistered: false, attended: false, registrationCount: 34, createdAt: null },
+  { id: "fb-8", title: "Project Exhibition 2026 — JCET Innovate", description: "Showcase your final year projects to industry experts and recruiters.", date: "2026-05-10", type: "technical", venue: "Exhibition Hall", posterUrl: null, capacity: 200, deadline: null, organizerName: "All Departments", xpReward: 250, status: "upcoming", registrationOpen: true, tags: "project,exhibition,innovation", domain: "technical", registrationFee: 0, requiresPayment: false, isTeamEvent: true, maxTeamSize: 6, isRegistered: false, attended: false, registrationCount: 56, createdAt: null },
+];
+
 interface Registration {
   id: string; studentName: string | null; studentUsn: string | null;
   email: string | null; phone: string | null; branch: string | null;
@@ -120,18 +131,16 @@ export default function EventsHub() {
   const qc = useQueryClient();
   const canManage = user?.role === "faculty" || user?.role === "admin";
 
-  const { data: rawEvents, isLoading, isError } = useApiGet<EventItem[]>("/events-hub");
+  const { data: rawEvents, isLoading, isError } = useApiGet<EventItem[]>("/events-hub", { retry: 0 });
 
-  const FALLBACK_EVENTS: EventItem[] = [
-    { id: "fb-1", title: "HackJCET 2026 — 24-Hour Hackathon", description: "Build, innovate, and win at JCET's annual 24-hour hackathon. Open to all students.", date: "2026-04-10", type: "hackathon", venue: "CS Block Auditorium", posterUrl: null, capacity: 100, deadline: null, organizerName: "CSE Department", xpReward: 200, status: "upcoming", registrationOpen: true, tags: "coding,hackathon,innovation", domain: "technical", registrationFee: 0, requiresPayment: false, isTeamEvent: true, maxTeamSize: 4, isRegistered: false, attended: false, registrationCount: 47, createdAt: null },
-    { id: "fb-2", title: "Utsav 2026 — JCET Cultural Fest", description: "Celebrate creativity at JCET's biggest cultural event — music, dance, drama and art.", date: "2026-04-15", type: "cultural", venue: "Open Amphitheater", posterUrl: null, capacity: 500, deadline: null, organizerName: "Student Council", xpReward: 100, status: "upcoming", registrationOpen: true, tags: "cultural,music,dance", domain: "cultural", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 123, createdAt: null },
-    { id: "fb-3", title: "AWS Cloud Computing Workshop", description: "Hands-on cloud workshop with AWS architecture, serverless, and certification guidance.", date: "2026-04-17", type: "workshop", venue: "Computer Lab 3", posterUrl: null, capacity: 60, deadline: null, organizerName: "Training & Placement", xpReward: 150, status: "upcoming", registrationOpen: true, tags: "cloud,aws,workshop", domain: "technical", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 38, createdAt: null },
-    { id: "fb-4", title: "JCET Sports Day 2026", description: "Annual inter-department sports championship. Cricket, football, athletics and more.", date: "2026-04-22", type: "sports", venue: "Sports Ground", posterUrl: null, capacity: 200, deadline: null, organizerName: "Physical Education", xpReward: 75, status: "upcoming", registrationOpen: true, tags: "sports,athletics", domain: "sports", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 89, createdAt: null },
-    { id: "fb-5", title: "AI/ML Industry Expert Talk", description: "Industry experts share insights on Machine Learning careers and AI applications.", date: "2026-04-19", type: "academic", venue: "Seminar Hall A", posterUrl: null, capacity: 150, deadline: null, organizerName: "AIML Department", xpReward: 60, status: "upcoming", registrationOpen: true, tags: "AI,ML,career", domain: "academic", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 62, createdAt: null },
-    { id: "fb-6", title: "Web Dev Bootcamp — React & Node.js", description: "Intensive 2-day bootcamp on modern full-stack web development with React and Node.js.", date: "2026-05-02", type: "workshop", venue: "IT Lab", posterUrl: null, capacity: 40, deadline: null, organizerName: "IEEE Student Branch", xpReward: 180, status: "upcoming", registrationOpen: true, tags: "react,nodejs,webdev", domain: "technical", registrationFee: 0, requiresPayment: false, isTeamEvent: false, maxTeamSize: null, isRegistered: false, attended: false, registrationCount: 29, createdAt: null },
-  ];
+  const isFallback = !isLoading && (!rawEvents || rawEvents.length === 0);
+  const events = rawEvents && rawEvents.length > 0
+    ? rawEvents
+    : (isLoading ? [] : (() => { console.warn("[EventsHub] API unavailable — rendering fallback events"); return FALLBACK_EVENTS; })());
 
-  const events = rawEvents && rawEvents.length > 0 ? rawEvents : (isLoading ? [] : FALLBACK_EVENTS);
+  if (!isLoading) {
+    console.log(`[EventsHub] Rendering ${events.length} events (${isFallback ? "FALLBACK" : "live API"})`);
+  }
 
   const [countOverrides, setCountOverrides] = useState<Record<string, number>>({});
   const [socketConnected, setSocketConnected] = useState(false);
@@ -377,14 +386,14 @@ export default function EventsHub() {
         </div>
 
         {/* API Error / Fallback Banner */}
-        {(isError || (rawEvents && rawEvents.length === 0 && !isLoading)) && (
+        {isFallback && (
           <div className={`flex items-start gap-3 px-4 py-3 rounded-xl border text-sm ${isError ? "bg-amber-50 border-amber-200 text-amber-800" : "bg-blue-50 border-blue-200 text-blue-800"}`}>
             <AlertCircle className={`w-4 h-4 mt-0.5 shrink-0 ${isError ? "text-amber-500" : "text-blue-500"}`} />
             <div>
-              <span className="font-semibold">{isError ? "Connection issue — " : "No events added yet — "}</span>
+              <span className="font-semibold">{isError ? "Server unavailable — " : "No live events yet — "}</span>
               {isError
-                ? "showing sample events so the UI stays functional. Registration requires login and server connection."
-                : "showing sample events below. Create your first event using the 'Create Event' button above."}
+                ? "showing sample events below so you can explore the UI. Set VITE_API_URL for production backend."
+                : "showing sample events. Faculty or Admin can create real events using the button above."}
             </div>
           </div>
         )}

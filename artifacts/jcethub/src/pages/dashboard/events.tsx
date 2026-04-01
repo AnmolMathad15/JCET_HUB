@@ -59,8 +59,18 @@ export default function Events() {
   const qc = useQueryClient();
   const postEvent = useApiPost<any, any>("/dashboard/events");
 
-  const { data: rawEvents, isLoading, isError } = useApiGet<EventItem[]>("/events-hub");
-  const events = (rawEvents && rawEvents.length > 0) ? rawEvents : (isLoading ? [] : FALLBACK_EVENTS);
+  const { data: rawEvents, isLoading, isError } = useApiGet<EventItem[]>("/events-hub", { retry: 0 });
+  const usingFallback = !isLoading && (!rawEvents || rawEvents.length === 0);
+  const events = rawEvents && rawEvents.length > 0
+    ? rawEvents
+    : (isLoading ? [] : (() => {
+        if (usingFallback) console.warn("[Events] API unavailable — loading fallback event data");
+        return FALLBACK_EVENTS;
+      })());
+
+  if (!isLoading) {
+    console.log(`[Events] Rendering ${events.length} event cards (${usingFallback ? "FALLBACK" : "live API"})`);
+  }
 
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", date: "", type: "technical", venue: "" });
