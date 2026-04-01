@@ -32,7 +32,16 @@ import AdminSubjects from "@/pages/dashboard/admin/subjects";
 import AdminUsers from "@/pages/dashboard/admin/users";
 import AdminFacultyAssignments from "@/pages/dashboard/admin/faculty-assignments";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      retryDelay: 800,
+      staleTime: 30_000,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function Router() {
   return (
