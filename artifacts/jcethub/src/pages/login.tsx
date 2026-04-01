@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLogin } from "@workspace/api-client-react";
 import { setAuthToken, setUser, isAuthenticated } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ const DEMO_CREDS = [
 export default function Login() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const qc = useQueryClient();
   const loginMutation = useLogin();
 
   const [usn, setUsn] = useState("");
@@ -44,6 +46,7 @@ export default function Login() {
         onSuccess: (data) => {
           setAuthToken(data.token);
           setUser(data.user);
+          qc.clear();
           toast({ title: "Login Successful", description: `Welcome back, ${data.user.name}` });
           setLocation("/dashboard");
         },

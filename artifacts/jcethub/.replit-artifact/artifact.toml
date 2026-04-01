@@ -26,6 +26,17 @@ serve = "static"
 from = "/*"
 to = "/index.html"
 
+[[services.production.headers]]
+from = "/index.html"
+[services.production.headers.headers]
+"Cache-Control" = "no-cache, no-store, must-revalidate"
+"Pragma" = "no-cache"
+
+[[services.production.headers]]
+from = "/assets/*"
+[services.production.headers.headers]
+"Cache-Control" = "public, max-age=31536000, immutable"
+
 [services.env]
 PORT = "19904"
 BASE_PATH = "/"
