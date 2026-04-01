@@ -125,7 +125,7 @@ router.put("/events-hub/:id", requireAuth, async (req, res) => {
     if (!user || (user.role !== "faculty" && user.role !== "admin")) {
       res.status(403).json({ error: "Faculty/Admin only" }); return;
     }
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { title, description, date, type, venue, posterUrl, capacity, deadline, xpReward, tags, domain, status, registrationOpen, registrationFee, requiresPayment, isTeamEvent, maxTeamSize } = req.body;
     const updated = await db.update(eventsTable).set({
       title, description, date, type, venue, posterUrl,
@@ -148,7 +148,7 @@ router.delete("/events-hub/:id", requireAuth, async (req, res) => {
   try {
     const user = (req as any).currentUser;
     if (!user || user.role !== "admin") { res.status(403).json({ error: "Admin only" }); return; }
-    await db.delete(eventsTable).where(eq(eventsTable.id, req.params.id));
+    await db.delete(eventsTable).where(eq(eventsTable.id, req.params.id as string));
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete event" });
@@ -157,20 +157,21 @@ router.delete("/events-hub/:id", requireAuth, async (req, res) => {
 
 router.post("/events-hub/:id/register", requireAuth, async (req, res) => {
   try {
+    const id = req.params.id as string;
     const user = (req as any).currentUser;
     if (!user) { res.status(401).json({ error: "Auth required" }); return; }
 
-    const event = await db.select().from(eventsTable).where(eq(eventsTable.id, req.params.id)).limit(1);
+    const event = await db.select().from(eventsTable).where(eq(eventsTable.id, id)).limit(1);
     if (!event.length) { res.status(404).json({ error: "Event not found" }); return; }
     if (!event[0].registrationOpen) { res.status(400).json({ error: "Registration closed" }); return; }
 
     const existing = await db.select().from(eventRegistrationsTable)
-      .where(and(eq(eventRegistrationsTable.eventId, req.params.id), eq(eventRegistrationsTable.studentId, user.id)))
+      .where(and(eq(eventRegistrationsTable.eventId, id), eq(eventRegistrationsTable.studentId, user.id)))
       .limit(1);
     if (existing.length) { res.status(400).json({ error: "Already registered" }); return; }
 
     if (event[0].capacity) {
-      const count = await db.select({ c: sql<number>`count(*)` }).from(eventRegistrationsTable).where(eq(eventRegistrationsTable.eventId, req.params.id));
+      const count = await db.select({ c: sql<number>`count(*)` }).from(eventRegistrationsTable).where(eq(eventRegistrationsTable.eventId, id));
       if (Number(count[0].c) >= event[0].capacity) { res.status(400).json({ error: "Event is full" }); return; }
     }
 
@@ -185,7 +186,7 @@ router.post("/events-hub/:id/register", requireAuth, async (req, res) => {
       : "not_required";
 
     const reg = await db.insert(eventRegistrationsTable).values({
-      id: randomUUID(), eventId: req.params.id, studentId: user.id,
+      id: randomUUID(), eventId: id, studentId: user.id,
       studentName: user.name, studentUsn: user.usn,
       email, phone, branch, semester, yearOfStudy,
       teamName, teamMembers: teamMembers ? JSON.stringify(teamMembers) : null,
@@ -197,8 +198,8 @@ router.post("/events-hub/:id/register", requireAuth, async (req, res) => {
       qrToken: randomUUID(), status: "registered", registeredAt: new Date(),
     }).returning();
 
-    const newCount = await db.select({ c: sql<number>`count(*)` }).from(eventRegistrationsTable).where(eq(eventRegistrationsTable.eventId, req.params.id));
-    broadcastEventRegistration(req.params.id, Number(newCount[0].c), 1);
+    const newCount = await db.select({ c: sql<number>`count(*)` }).from(eventRegistrationsTable).where(eq(eventRegistrationsTable.eventId, id));
+    broadcastEventRegistration(id, Number(newCount[0].c), 1);
 
     res.json(reg[0]);
   } catch (err) {
@@ -209,11 +210,12 @@ router.post("/events-hub/:id/register", requireAuth, async (req, res) => {
 
 router.delete("/events-hub/:id/register", requireAuth, async (req, res) => {
   try {
+    const id = req.params.id as string;
     const user = (req as any).currentUser;
     await db.delete(eventRegistrationsTable)
-      .where(and(eq(eventRegistrationsTable.eventId, req.params.id), eq(eventRegistrationsTable.studentId, user.id)));
-    const newCount = await db.select({ c: sql<number>`count(*)` }).from(eventRegistrationsTable).where(eq(eventRegistrationsTable.eventId, req.params.id));
-    broadcastEventRegistration(req.params.id, Number(newCount[0].c), -1);
+      .where(and(eq(eventRegistrationsTable.eventId, id), eq(eventRegistrationsTable.studentId, user.id)));
+    const newCount = await db.select({ c: sql<number>`count(*)` }).from(eventRegistrationsTable).where(eq(eventRegistrationsTable.eventId, id));
+    broadcastEventRegistration(id, Number(newCount[0].c), -1);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: "Failed to unregister" });
@@ -222,12 +224,13 @@ router.delete("/events-hub/:id/register", requireAuth, async (req, res) => {
 
 router.get("/events-hub/:id/registrations", requireAuth, async (req, res) => {
   try {
+    const id = req.params.id as string;
     const user = (req as any).currentUser;
     if (!user || (user.role !== "faculty" && user.role !== "admin")) {
       res.status(403).json({ error: "Faculty/Admin only" }); return;
     }
     const regs = await db.select().from(eventRegistrationsTable)
-      .where(eq(eventRegistrationsTable.eventId, req.params.id))
+      .where(eq(eventRegistrationsTable.eventId, id))
       .orderBy(asc(eventRegistrationsTable.registeredAt));
     res.json(regs);
   } catch (err) {
@@ -237,21 +240,23 @@ router.get("/events-hub/:id/registrations", requireAuth, async (req, res) => {
 
 router.post("/events-hub/:id/attendance/:regId", requireAuth, async (req, res) => {
   try {
+    const id = req.params.id as string;
+    const regId = req.params.regId as string;
     const user = (req as any).currentUser;
     if (!user || (user.role !== "faculty" && user.role !== "admin")) {
       res.status(403).json({ error: "Faculty/Admin only" }); return;
     }
-    const reg = await db.select().from(eventRegistrationsTable).where(eq(eventRegistrationsTable.id, req.params.regId)).limit(1);
+    const reg = await db.select().from(eventRegistrationsTable).where(eq(eventRegistrationsTable.id, regId)).limit(1);
     if (!reg.length) { res.status(404).json({ error: "Registration not found" }); return; }
     if (reg[0].attended) { res.status(400).json({ error: "Already marked attended" }); return; }
 
     await db.update(eventRegistrationsTable).set({ attended: true, attendedAt: new Date(), status: "attended" })
-      .where(eq(eventRegistrationsTable.id, req.params.regId));
+      .where(eq(eventRegistrationsTable.id, regId));
 
-    const event = await db.select().from(eventsTable).where(eq(eventsTable.id, req.params.id)).limit(1);
+    const event = await db.select().from(eventsTable).where(eq(eventsTable.id, id)).limit(1);
     if (event.length) {
       await awardPointsAndBadges(reg[0].studentId, event[0].id, event[0].xpReward, `Attended: ${event[0].title}`, event[0].type);
-      broadcastAttendanceUpdate(req.params.id, reg[0].studentId, event[0].xpReward);
+      broadcastAttendanceUpdate(id, reg[0].studentId, event[0].xpReward);
     }
     res.json({ success: true });
   } catch (err) {

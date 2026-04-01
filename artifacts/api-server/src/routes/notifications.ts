@@ -2,14 +2,15 @@ import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { notificationsTable } from "@workspace/db/schema";
 import { desc } from "drizzle-orm";
+import { randomUUID } from "crypto";
 
 const router: IRouter = Router();
 
 router.post("/notifications", async (req, res) => {
   try {
     const { title, message, type } = req.body ?? {};
-    if (!title || !message) return res.status(400).json({ error: "validation_error", message: "title and message required" });
-    await db.insert(notificationsTable).values({ title, message, type: type ?? "info", isRead: false });
+    if (!title || !message) { res.status(400).json({ error: "validation_error", message: "title and message required" }); return; }
+    await db.insert(notificationsTable).values({ id: randomUUID(), title, message, type: type ?? "announcement", isRead: false });
     res.status(201).json({ success: true });
   } catch (err) {
     req.log.error({ err }, "Post notification error");

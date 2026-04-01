@@ -86,10 +86,11 @@ router.post("/", requireRole("faculty", "admin"), async (req: AuthRequest, res) 
 });
 
 router.get("/:id", async (req: AuthRequest, res) => {
+  const id = req.params.id as string;
   const [assignment] = await db
     .select()
     .from(assignmentsTable)
-    .where(eq(assignmentsTable.id, req.params.id));
+    .where(eq(assignmentsTable.id, id));
 
   if (!assignment) { res.status(404).json({ error: "not found" }); return; }
 
@@ -116,30 +117,32 @@ router.get("/:id", async (req: AuthRequest, res) => {
 });
 
 router.delete("/:id", requireRole("faculty", "admin"), async (req: AuthRequest, res) => {
+  const id = req.params.id as string;
   const user = req.currentUser!;
   const [assignment] = await db
     .select()
     .from(assignmentsTable)
-    .where(eq(assignmentsTable.id, req.params.id));
+    .where(eq(assignmentsTable.id, id));
 
   if (!assignment) { res.status(404).json({ error: "not found" }); return; }
   if (user.role === "faculty" && assignment.facultyId !== user.id) {
     res.status(403).json({ error: "forbidden" }); return;
   }
 
-  await db.delete(submissionsTable).where(eq(submissionsTable.assignmentId, req.params.id));
-  await db.delete(assignmentsTable).where(eq(assignmentsTable.id, req.params.id));
+  await db.delete(submissionsTable).where(eq(submissionsTable.assignmentId, id));
+  await db.delete(assignmentsTable).where(eq(assignmentsTable.id, id));
   res.status(204).end();
 });
 
 router.post("/:id/submit", requireRole("student"), async (req: AuthRequest, res) => {
+  const id = req.params.id as string;
   const user = req.currentUser!;
   const { fileUrl, fileName, remarks } = req.body;
 
   const [assignment] = await db
     .select()
     .from(assignmentsTable)
-    .where(eq(assignmentsTable.id, req.params.id));
+    .where(eq(assignmentsTable.id, id));
 
   if (!assignment) { res.status(404).json({ error: "Assignment not found" }); return; }
 
@@ -152,7 +155,7 @@ router.post("/:id/submit", requireRole("student"), async (req: AuthRequest, res)
     .from(submissionsTable)
     .where(
       and(
-        eq(submissionsTable.assignmentId, req.params.id),
+        eq(submissionsTable.assignmentId, id),
         eq(submissionsTable.studentId, user.id)
       )
     );
@@ -169,7 +172,7 @@ router.post("/:id/submit", requireRole("student"), async (req: AuthRequest, res)
       .insert(submissionsTable)
       .values({
         id: generateId(),
-        assignmentId: req.params.id,
+        assignmentId: id,
         studentId: user.id,
         studentUsn: user.usn,
         studentName: user.name,
@@ -184,13 +187,15 @@ router.post("/:id/submit", requireRole("student"), async (req: AuthRequest, res)
 });
 
 router.post("/:id/submissions/:subId/grade", requireRole("faculty", "admin"), async (req: AuthRequest, res) => {
+  const id = req.params.id as string;
+  const subId = req.params.subId as string;
   const user = req.currentUser!;
   const { marksAwarded, remarks } = req.body;
 
   const [assignment] = await db
     .select()
     .from(assignmentsTable)
-    .where(eq(assignmentsTable.id, req.params.id));
+    .where(eq(assignmentsTable.id, id));
 
   if (!assignment) { res.status(404).json({ error: "Assignment not found" }); return; }
   if (user.role === "faculty" && assignment.facultyId !== user.id) {
@@ -200,7 +205,7 @@ router.post("/:id/submissions/:subId/grade", requireRole("faculty", "admin"), as
   const [sub] = await db
     .update(submissionsTable)
     .set({ marksAwarded, remarks, status: "graded", gradedAt: new Date() })
-    .where(eq(submissionsTable.id, req.params.subId))
+    .where(eq(submissionsTable.id, subId))
     .returning();
 
   if (!sub) { res.status(404).json({ error: "Submission not found" }); return; }

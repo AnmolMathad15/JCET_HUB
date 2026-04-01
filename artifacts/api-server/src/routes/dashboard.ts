@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { attendanceTable, marksTable, notificationsTable, eventsTable } from "@workspace/db/schema";
 import { eq, and, gte } from "drizzle-orm";
+import { randomUUID } from "crypto";
 
 const router: IRouter = Router();
 
@@ -54,7 +55,7 @@ router.post("/dashboard/events", async (req, res) => {
   try {
     const { title, description, date, type, venue } = req.body ?? {};
     if (!title || !date) return res.status(400).json({ error: "validation_error", message: "title and date required" });
-    await db.insert(eventsTable).values({ title, description: description ?? "", date, type: type ?? "general", venue: venue ?? "" });
+    await db.insert(eventsTable).values({ id: randomUUID(), title, description: description ?? "", date, type: type ?? "general", venue: venue ?? "" });
     res.status(201).json({ success: true });
   } catch (err) {
     req.log.error({ err }, "Post event error");

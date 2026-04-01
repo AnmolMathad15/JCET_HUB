@@ -4,7 +4,7 @@ import {
   usersTable, departmentsTable, batchesTable, subjectsTable,
   facultySubjectAssignmentsTable,
 } from "@workspace/db/schema";
-import { eq, like, and, sql, or } from "drizzle-orm";
+import { eq, like, and, sql, or, type SQL } from "drizzle-orm";
 import { requireAuth, requireRole, type AuthRequest } from "../middlewares/auth";
 import crypto from "crypto";
 
@@ -37,18 +37,19 @@ router.post("/departments", requireRole("admin"), async (req: AuthRequest, res) 
 });
 
 router.put("/departments/:id", requireRole("admin"), async (req, res) => {
+  const id = req.params.id as string;
   const { name, code, hodName } = req.body;
   const [dept] = await db
     .update(departmentsTable)
     .set({ name, code: code?.toUpperCase(), hodName })
-    .where(eq(departmentsTable.id, req.params.id))
+    .where(eq(departmentsTable.id, id))
     .returning();
   if (!dept) { res.status(404).json({ error: "not found" }); return; }
   res.json(dept);
 });
 
 router.delete("/departments/:id", requireRole("admin"), async (req, res) => {
-  await db.delete(departmentsTable).where(eq(departmentsTable.id, req.params.id));
+  await db.delete(departmentsTable).where(eq(departmentsTable.id, req.params.id as string));
   res.status(204).end();
 });
 
@@ -71,25 +72,25 @@ router.post("/batches", requireRole("admin"), async (req, res) => {
 });
 
 router.put("/batches/:id", requireRole("admin"), async (req, res) => {
+  const id = req.params.id as string;
   const { name, departmentId, semester, year } = req.body;
   const [batch] = await db
     .update(batchesTable)
     .set({ name, departmentId, semester, year })
-    .where(eq(batchesTable.id, req.params.id))
+    .where(eq(batchesTable.id, id))
     .returning();
   if (!batch) { res.status(404).json({ error: "not found" }); return; }
   res.json(batch);
 });
 
 router.delete("/batches/:id", requireRole("admin"), async (req, res) => {
-  await db.delete(batchesTable).where(eq(batchesTable.id, req.params.id));
+  await db.delete(batchesTable).where(eq(batchesTable.id, req.params.id as string));
   res.status(204).end();
 });
 
 router.get("/subjects", async (req, res) => {
   const { departmentId, semester } = req.query;
-  let q = db.select().from(subjectsTable);
-  const conditions = [];
+  const conditions: SQL<unknown>[] = [];
   if (departmentId) conditions.push(eq(subjectsTable.departmentId, departmentId as string));
   if (semester) conditions.push(eq(subjectsTable.semester, semester as string));
   const rows = conditions.length
@@ -109,18 +110,19 @@ router.post("/subjects", requireRole("admin"), async (req, res) => {
 });
 
 router.put("/subjects/:id", requireRole("admin"), async (req, res) => {
+  const id = req.params.id as string;
   const { name, code, departmentId, semester, credits } = req.body;
   const [subject] = await db
     .update(subjectsTable)
     .set({ name, code: code?.toUpperCase(), departmentId, semester, credits })
-    .where(eq(subjectsTable.id, req.params.id))
+    .where(eq(subjectsTable.id, id))
     .returning();
   if (!subject) { res.status(404).json({ error: "not found" }); return; }
   res.json(subject);
 });
 
 router.delete("/subjects/:id", requireRole("admin"), async (req, res) => {
-  await db.delete(subjectsTable).where(eq(subjectsTable.id, req.params.id));
+  await db.delete(subjectsTable).where(eq(subjectsTable.id, req.params.id as string));
   res.status(204).end();
 });
 
@@ -128,7 +130,7 @@ router.get("/users", async (req: AuthRequest, res) => {
   const { role, departmentId, batchId, search, page = "1", limit = "20" } = req.query;
   const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
 
-  const conditions = [];
+  const conditions: (SQL<unknown> | undefined)[] = [];
   if (role) conditions.push(eq(usersTable.role, role as string));
   if (departmentId) conditions.push(eq(usersTable.departmentId, departmentId as string));
   if (batchId) conditions.push(eq(usersTable.batchId, batchId as string));
@@ -191,6 +193,7 @@ router.post("/users", requireRole("admin"), async (req, res) => {
 });
 
 router.put("/users/:id", requireRole("admin"), async (req, res) => {
+  const id = req.params.id as string;
   const { name, role, branch, semester, email, phone, departmentId, batchId, admissionType, password } = req.body;
   const updates: Record<string, any> = { name, role, branch, semester, email, phone, departmentId, batchId, admissionType };
   if (password) updates.passwordHash = hashPassword(password);
@@ -198,17 +201,18 @@ router.put("/users/:id", requireRole("admin"), async (req, res) => {
   const [user] = await db
     .update(usersTable)
     .set(updates)
-    .where(eq(usersTable.id, req.params.id))
+    .where(eq(usersTable.id, id))
     .returning({ id: usersTable.id, usn: usersTable.usn, name: usersTable.name, role: usersTable.role });
   if (!user) { res.status(404).json({ error: "not found" }); return; }
   res.json(user);
 });
 
 router.delete("/users/:id", requireRole("admin"), async (req: AuthRequest, res) => {
-  if (req.params.id === req.currentUser?.id) {
+  const id = req.params.id as string;
+  if (id === req.currentUser?.id) {
     res.status(400).json({ error: "Cannot delete yourself" }); return;
   }
-  await db.delete(usersTable).where(eq(usersTable.id, req.params.id));
+  await db.delete(usersTable).where(eq(usersTable.id, id));
   res.status(204).end();
 });
 
@@ -233,7 +237,7 @@ router.post("/faculty-assignments", requireRole("admin"), async (req, res) => {
 });
 
 router.delete("/faculty-assignments/:id", requireRole("admin"), async (req, res) => {
-  await db.delete(facultySubjectAssignmentsTable).where(eq(facultySubjectAssignmentsTable.id, req.params.id));
+  await db.delete(facultySubjectAssignmentsTable).where(eq(facultySubjectAssignmentsTable.id, req.params.id as string));
   res.status(204).end();
 });
 
