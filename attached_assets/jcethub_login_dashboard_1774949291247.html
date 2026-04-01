@@ -1,0 +1,789 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a237e;--navy2:#283593;--orange:#E8821A;--yellow:#f5c518;
+  --green:#1d9e75;--green-bg:#e1f5ee;--amber:#ba7517;--amber-bg:#faeeda;
+  --red:#c62828;--red-bg:#ffebee;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;min-height:800px}
+
+.screen{display:none}
+.screen.active{display:block}
+
+/* ═══ LOGIN ═══ */
+#login-screen{
+  min-height:820px;
+  position:relative;
+  overflow:hidden;
+}
+.college-bg{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(rgba(10,15,60,0.38),rgba(10,15,60,0.38)),
+    url('https://images.unsplash.com/photo-1562774053-701939374585?w=1600&q=80') center/cover no-repeat;
+  z-index:0;
+}
+
+/* ribbon */
+.ribbon{
+  position:relative;z-index:10;
+  background:linear-gradient(90deg,#1a237e,#283593,#1a237e);
+  height:46px;display:flex;align-items:center;overflow:hidden;
+  border-bottom:2px solid var(--orange);
+}
+.ribbon-track{
+  display:flex;align-items:center;gap:0;
+  white-space:nowrap;
+  animation:marquee 22s linear infinite;
+  will-change:transform;
+}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ribbon-item{
+  display:flex;align-items:center;gap:10px;
+  padding:0 32px;
+  font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+.ribbon-logo{
+  width:30px;height:30px;border-radius:50%;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.ribbon-logo-text{font-size:9px;font-weight:800;color:var(--navy);letter-spacing:-0.5px;line-height:1}
+.ribbon-dot-accent{
+  width:5px;height:5px;background:var(--orange);
+  border-radius:50%;display:inline-block;margin-left:1px;margin-top:-8px;vertical-align:top;
+}
+.ribbon-sep{color:var(--orange);font-size:18px;margin:0 6px}
+
+/* dark toggle on ribbon */
+.dark-btn-top{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  z-index:20;background:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:20px;padding:4px 12px;
+  font-size:11px;font-weight:600;color:#fff;cursor:pointer;
+  white-space:nowrap;
+}
+.dark-btn-top:hover{background:rgba(255,255,255,0.25)}
+
+/* login card */
+.login-center{
+  position:relative;z-index:5;
+  display:flex;align-items:center;justify-content:center;
+  min-height:calc(820px - 46px);
+  padding:30px 20px;
+}
+.login-card{
+  background:rgba(255,255,255,0.93);
+  border-radius:18px;
+  padding:36px 32px 28px;
+  width:100%;max-width:420px;
+  text-align:center;
+  backdrop-filter:blur(8px);
+}
+.dark-mode .login-card{
+  background:rgba(18,22,60,0.92);
+}
+.lc-logo-wrap{margin-bottom:6px;display:flex;justify-content:center}
+.lc-logo{
+  width:74px;height:74px;border-radius:50%;
+  background:var(--navy);
+  border:3px solid var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.lc-logo-text{font-size:20px;font-weight:800;color:#fff;letter-spacing:-1px;font-style:italic}
+.lc-logo-dot{width:8px;height:8px;background:var(--orange);border-radius:50%;position:absolute;top:10px;right:10px}
+.lc-title{font-size:20px;font-weight:700;color:#111;margin:12px 0 2px}
+.dark-mode .lc-title{color:#e8eaff}
+.lc-sub{font-size:13px;color:#555;margin-bottom:18px}
+.dark-mode .lc-sub{color:#8a90c0}
+
+/* role switcher */
+.role-switcher{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
+.role-btn{padding:6px 18px;border-radius:20px;border:1px solid #ccc;background:#fff;
+  font-size:12px;font-weight:600;color:#555;cursor:pointer;transition:all 0.18s}
+.role-btn:hover{border-color:var(--navy);color:var(--navy)}
+.role-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.dark-mode .role-btn{background:#1c1f3a;color:#8a90c0;border-color:#2a2f5a}
+.dark-mode .role-btn.active{background:var(--navy);color:#fff}
+
+.field{text-align:left;margin-bottom:14px}
+.field label{font-size:11px;font-weight:700;color:#444;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.06em}
+.dark-mode .field label{color:#8a90c0}
+.field input{
+  width:100%;padding:11px 14px;
+  border:1px solid #d0d0d0;border-radius:10px;
+  background:#f8f8f8;color:#111;font-size:13px;outline:none;
+  transition:border 0.2s;
+}
+.dark-mode .field input{background:#1c1f3a;border-color:#2a2f5a;color:#e8eaff}
+.field input:focus{border-color:var(--navy)}
+.forgot{text-align:right;font-size:12px;color:var(--orange);cursor:pointer;margin-top:-8px;margin-bottom:12px;font-weight:600}
+.login-btn{
+  width:100%;padding:13px;
+  background:var(--yellow);color:#222;
+  border:none;border-radius:10px;
+  font-size:15px;font-weight:700;cursor:pointer;
+  transition:background 0.2s,transform 0.1s;
+  margin-top:4px;letter-spacing:0.3px;
+}
+.login-btn:hover{background:#f0b800;transform:scale(1.01)}
+.login-btn:active{transform:scale(0.98)}
+.login-err{color:var(--red);font-size:12px;margin-top:8px;display:none;font-weight:500}
+.login-hint{font-size:10px;color:#888;margin-top:14px;line-height:1.7}
+.dark-mode .login-hint{color:#4a5080}
+.hint-usn{color:var(--navy);font-weight:700}
+.dark-mode .hint-usn{color:#8a90ff}
+
+/* ═══ APP SHELL ═══ */
+#app-screen{background:#f0f2ff;min-height:820px}
+.dark-mode #app-screen{background:#0c0e22}
+
+.app-ribbon{
+  background:linear-gradient(90deg,#1a237e,#283593,#1a237e);
+  height:46px;display:flex;align-items:center;
+  border-bottom:2px solid var(--orange);
+  overflow:hidden;position:relative;
+}
+.app-ribbon-track{
+  display:flex;align-items:center;gap:0;
+  white-space:nowrap;
+  animation:marquee 22s linear infinite;
+}
+.topbar{
+  background:#fff;border-bottom:1px solid #e0e3f0;
+  padding:0 22px;height:58px;display:flex;align-items:center;gap:12px;
+}
+.dark-mode .topbar{background:#141628;border-color:#1c1f3a}
+.tb-logo-circle{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--navy);border:2px solid var(--orange);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.tb-logo-t{font-size:11px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.tb-appname{font-size:18px;font-weight:800;color:var(--navy);letter-spacing:0.5px}
+.dark-mode .tb-appname{color:#8a90ff}
+.tb-sep{width:1px;height:30px;background:#e0e3f0;margin:0 6px}
+.dark-mode .tb-sep{background:#1c1f3a}
+.s-avatar{width:34px;height:34px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+.s-name{font-size:14px;font-weight:700;color:#111}
+.dark-mode .s-name{color:#e8eaff}
+.s-meta{font-size:10px;color:#777}
+.dark-mode .s-meta{color:#5a5f8a}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.tb-icon-btn{width:34px;height:34px;border-radius:8px;background:#f0f2ff;border:1px solid #e0e3f0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;position:relative}
+.dark-mode .tb-icon-btn{background:#1c1f3a;border-color:#2a2f5a}
+.nb{position:absolute;top:4px;right:4px;width:7px;height:7px;background:var(--orange);border-radius:50%}
+.tb-small-btn{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #e0e3f0;background:#f0f2ff;color:#444;cursor:pointer}
+.dark-mode .tb-small-btn{background:#1c1f3a;border-color:#2a2f5a;color:#8a90c0}
+.tb-logout-btn{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #e0e3f0;background:#fff;color:#c62828;cursor:pointer}
+.dark-mode .tb-logout-btn{background:#1c1f3a;border-color:#2a2f5a}
+
+.admin-bar{background:#fff;border-bottom:1px solid #e0e3f0;padding:0 22px;height:36px;display:flex;align-items:center;gap:4px}
+.dark-mode .admin-bar{background:#141628;border-color:#1c1f3a}
+.ar-tab{padding:3px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:#777;border:none;background:transparent}
+.ar-tab.active{background:var(--navy);color:#fff}
+
+.app-body{padding:22px}
+
+/* module grid */
+.mod-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.mod-card{
+  background:#fff;border:1px solid #e0e3f0;border-radius:16px;
+  padding:22px 10px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;
+  cursor:pointer;transition:all 0.18s;position:relative;
+}
+.dark-mode .mod-card{background:#141628;border-color:#1c1f3a}
+.mod-card:hover{background:#eef0ff;border-color:#c5cae9;transform:translateY(-3px)}
+.dark-mode .mod-card:hover{background:#1c1f3a;border-color:#3a3f7a}
+.mod-icon-box{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.mod-name{font-size:12px;font-weight:700;color:#222;text-align:center;line-height:1.3}
+.dark-mode .mod-name{color:#e8eaff}
+.mod-badge{position:absolute;top:10px;right:10px;background:var(--orange);color:#fff;font-size:9px;font-weight:700;border-radius:8px;padding:1px 6px}
+.mod-badge.red{background:var(--red)}
+
+/* detail */
+.detail-view{display:none;animation:fdIn 0.22s ease}
+.detail-view.on{display:block}
+@keyframes fdIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.dh{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.back{width:34px;height:34px;border-radius:8px;background:#fff;border:1px solid #e0e3f0;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;color:#333}
+.dark-mode .back{background:#141628;border-color:#1c1f3a;color:#e8eaff}
+.back:hover{background:#eef0ff}
+.dtitle{font-size:19px;font-weight:800;color:#111}
+.dark-mode .dtitle{color:#e8eaff}
+
+/* stat cards */
+.sc-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.sc{background:#fff;border:1px solid #e0e3f0;border-radius:12px;padding:14px 12px}
+.dark-mode .sc{background:#141628;border-color:#1c1f3a}
+.sc-l{font-size:11px;color:#777;margin-bottom:3px}
+.sc-v{font-size:22px;font-weight:800;color:#111}
+.dark-mode .sc-v{color:#e8eaff}
+.sc-s{font-size:10px;color:#aaa;margin-top:2px}
+.ok{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+
+.card{background:#fff;border:1px solid #e0e3f0;border-radius:14px;padding:16px;margin-bottom:14px}
+.dark-mode .card{background:#141628;border-color:#1c1f3a}
+.ct{font-size:13px;font-weight:700;color:#111;margin-bottom:12px}
+.dark-mode .ct{color:#e8eaff}
+
+/* bars */
+.ar{margin-bottom:10px}
+.at{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;color:#444}
+.dark-mode .at{color:#c0c5e0}
+.ab{height:7px;background:#f0f2ff;border-radius:4px;overflow:hidden}
+.dark-mode .ab{background:#1c1f3a}
+.af{height:100%;border-radius:4px}
+
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px}
+.pg{background:#e1f5ee;color:#0f6e56}.pa{background:#faeeda;color:#854f0b}.pr{background:#ffebee;color:#c62828}.pn{background:#e8eaff;color:#1a237e}
+.dark-mode .pn{background:#1c1f3a;color:#8a90ff}
+
+/* timetable */
+.ttg{display:grid;grid-template-columns:62px repeat(5,1fr);gap:3px;font-size:11px}
+.tth{background:var(--navy);color:#fff;text-align:center;padding:7px 3px;border-radius:6px;font-weight:700}
+.ttt{color:#999;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:10px}
+.ttc{background:#f5f6ff;border-radius:6px;padding:7px 4px;text-align:center;color:#333;min-height:38px;display:flex;align-items:center;justify-content:center}
+.dark-mode .ttc{background:#1c1f3a;color:#c0c5e0}
+.ttc.h{background:#e8eaff;color:var(--navy);font-weight:700}
+.dark-mode .ttc.h{background:#252b8a;color:#c5caff}
+
+.row{display:grid;gap:8px;padding:9px 0;border-top:1px solid #f0f2ff;font-size:12px;align-items:center}
+.dark-mode .row{border-color:#1c1f3a}
+
+/* cal */
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:8px}
+.ch{text-align:center;font-size:10px;color:#999;padding:4px 0;font-weight:700}
+.cd{text-align:center;font-size:11px;padding:5px 2px;border-radius:5px;cursor:pointer;color:#444}
+.dark-mode .cd{color:#8a90c0}
+.cd:hover{background:#f0f2ff}
+.cd.today{background:var(--navy);color:#fff;font-weight:800}
+.cd.hol{color:var(--red)}
+.cd.ev::after{content:'';display:block;width:4px;height:4px;background:var(--orange);border-radius:50%;margin:1px auto 0}
+.cd.ot{color:#ccc}
+
+.star{font-size:22px;cursor:pointer;color:#ccc}
+.star.lit{color:var(--orange)}
+
+.ev-item{display:flex;gap:12px;padding:10px 0;border-top:1px solid #f0f2ff;align-items:flex-start}
+.dark-mode .ev-item{border-color:#1c1f3a}
+.ev-dt{width:38px;text-align:center;background:var(--navy);border-radius:8px;padding:6px 4px;flex-shrink:0}
+.ev-day{font-size:17px;font-weight:800;color:#fff;line-height:1}
+.ev-mon{font-size:9px;color:rgba(255,255,255,0.7);text-transform:uppercase}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+</style>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen" class="screen active">
+  <div class="college-bg"></div>
+
+  <!-- Scrolling Ribbon -->
+  <div class="ribbon">
+    <div class="ribbon-track" id="rb1">
+      <div class="ribbon-item">
+        <div class="ribbon-logo"><div class="ribbon-logo-text">JG<em style="font-size:8px">i</em><span class="ribbon-dot-accent"></span></div></div>
+        JAIN COLLEGE OF ENGINEERING AND TECHNOLOGY, HUBBALLI
+        <span class="ribbon-sep">◆</span>
+      </div>
+      <div class="ribbon-item">
+        <div class="ribbon-logo"><div class="ribbon-logo-text">JG<em style="font-size:8px">i</em><span class="ribbon-dot-accent"></span></div></div>
+        JAIN COLLEGE OF ENGINEERING AND TECHNOLOGY, HUBBALLI
+        <span class="ribbon-sep">◆</span>
+      </div>
+      <div class="ribbon-item">
+        <div class="ribbon-logo"><div class="ribbon-logo-text">JG<em style="font-size:8px">i</em><span class="ribbon-dot-accent"></span></div></div>
+        JAIN COLLEGE OF ENGINEERING AND TECHNOLOGY, HUBBALLI
+        <span class="ribbon-sep">◆</span>
+      </div>
+      <div class="ribbon-item">
+        <div class="ribbon-logo"><div class="ribbon-logo-text">JG<em style="font-size:8px">i</em><span class="ribbon-dot-accent"></span></div></div>
+        JAIN COLLEGE OF ENGINEERING AND TECHNOLOGY, HUBBALLI
+        <span class="ribbon-sep">◆</span>
+      </div>
+    </div>
+    <button class="dark-btn-top" onclick="toggleDark()" id="dtbtn">🌙 Dark Mode</button>
+  </div>
+
+  <!-- Login Card -->
+  <div class="login-center">
+    <div class="login-card">
+      <div class="lc-logo-wrap">
+        <div class="lc-logo">
+          <div class="lc-logo-text">JG<em>i</em></div>
+          <div class="lc-logo-dot"></div>
+        </div>
+      </div>
+      <div class="lc-title">Welcome to JCETHub</div>
+      <div class="lc-sub" id="lc-sub-text">Student Login</div>
+
+      <div class="role-switcher">
+        <button class="role-btn active" onclick="switchRole('student',this)">Student</button>
+        <button class="role-btn" onclick="switchRole('faculty',this)">Faculty</button>
+        <button class="role-btn" onclick="switchRole('admin',this)">Admin</button>
+      </div>
+
+      <div class="field">
+        <label>USN / ID</label>
+        <input type="text" id="usn" placeholder="e.g. 2JH23CS001" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="pwd" placeholder="Enter your password" />
+      </div>
+      <div class="forgot">Forgot Password?</div>
+      <button class="login-btn" onclick="doLogin()">Login</button>
+      <div class="login-err" id="lerr">Invalid credentials. Please try again.</div>
+      <div class="login-hint">
+        Demo — Student: <span class="hint-usn">2JH23CS001</span> / <span class="hint-usn">student@001</span><br>
+        Faculty: <span class="hint-usn">FAC001</span> / <span class="hint-usn">faculty@001</span> &nbsp;|&nbsp; Admin: <span class="hint-usn">ADM001</span> / <span class="hint-usn">admin@001</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP SCREEN ═══ -->
+<div id="app-screen" class="screen">
+
+  <!-- App Ribbon -->
+  <div class="app-ribbon">
+    <div class="app-ribbon-track">
+      <div class="ribbon-item">
+        <div class="ribbon-logo"><div class="ribbon-logo-text">JG<em style="font-size:8px">i</em><span class="ribbon-dot-accent"></span></div></div>
+        JAIN COLLEGE OF ENGINEERING AND TECHNOLOGY, HUBBALLI
+        <span class="ribbon-sep">◆</span>
+      </div>
+      <div class="ribbon-item">
+        <div class="ribbon-logo"><div class="ribbon-logo-text">JG<em style="font-size:8px">i</em><span class="ribbon-dot-accent"></span></div></div>
+        JAIN COLLEGE OF ENGINEERING AND TECHNOLOGY, HUBBALLI
+        <span class="ribbon-sep">◆</span>
+      </div>
+      <div class="ribbon-item">
+        <div class="ribbon-logo"><div class="ribbon-logo-text">JG<em style="font-size:8px">i</em><span class="ribbon-dot-accent"></span></div></div>
+        JAIN COLLEGE OF ENGINEERING AND TECHNOLOGY, HUBBALLI
+        <span class="ribbon-sep">◆</span>
+      </div>
+      <div class="ribbon-item">
+        <div class="ribbon-logo"><div class="ribbon-logo-text">JG<em style="font-size:8px">i</em><span class="ribbon-dot-accent"></span></div></div>
+        JAIN COLLEGE OF ENGINEERING AND TECHNOLOGY, HUBBALLI
+        <span class="ribbon-sep">◆</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="tb-logo-circle"><div class="tb-logo-t">JG<em style="font-size:9px">i</em></div></div>
+    <div class="tb-appname">JCETHub</div>
+    <div class="tb-sep"></div>
+    <div class="s-avatar" id="av">RS</div>
+    <div>
+      <div class="s-name" id="sname">Rahul Sharma</div>
+      <div class="s-meta" id="smeta">2JH23CS001 · Sec A · Sem 6 · 3rd Year · CSE</div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-icon-btn" onclick="openMod('notifications')">🔔<span class="nb"></span></div>
+      <button class="tb-small-btn" onclick="toggleDark()" id="dtbtn2">🌙 Dark</button>
+      <button class="tb-logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- Admin role bar -->
+  <div class="admin-bar" id="adminbar" style="display:none">
+    <button class="ar-tab active" onclick="setAdminRole('student',this)">Student View</button>
+    <button class="ar-tab" onclick="setAdminRole('faculty',this)">Faculty View</button>
+    <button class="ar-tab" onclick="setAdminRole('admin',this)">Admin View</button>
+  </div>
+
+  <div class="app-body">
+    <!-- Dashboard -->
+    <div id="dash">
+      <div style="font-size:13px;color:#888;margin-bottom:18px" id="greet">Good morning! Here's your campus at a glance.</div>
+      <div class="mod-grid" id="mgrid"></div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div id="detpanel" class="detail-view"></div>
+  </div>
+</div>
+
+<script>
+const USERS={
+  '2JH23CS001':{p:'student@001',role:'student',name:'Rahul Sharma',meta:'2JH23CS001 · Sec A · Sem 6 · 3rd Year · CSE',av:'RS'},
+  'FAC001':{p:'faculty@001',role:'faculty',name:'Dr. Priya Kumar',meta:'Faculty · CSE Department · JCET',av:'PK'},
+  'ADM001':{p:'admin@001',role:'admin',name:'Admin Office',meta:'Administrator · JCET',av:'AD'},
+};
+
+const MODS=[
+  {id:'attendance',n:'Attendance',ic:'📋',bg:'#e8eaff',roles:['student','faculty','admin'],badge:'',bc:''},
+  {id:'timetable',n:'Timetable',ic:'📅',bg:'#e1f5ee',roles:['student','faculty','admin'],badge:'',bc:''},
+  {id:'notes',n:'Notes & Material',ic:'📚',bg:'#faeeda',roles:['student','faculty','admin'],badge:'',bc:''},
+  {id:'exams',n:'Exam Schedule',ic:'📝',bg:'#ffebee',roles:['student','faculty','admin'],badge:'2',bc:'red'},
+  {id:'ia',n:'Internal Assessment',ic:'✏️',bg:'#e8eaff',roles:['student','faculty','admin'],badge:'',bc:''},
+  {id:'results',n:'Results',ic:'📊',bg:'#e1f5ee',roles:['student','faculty','admin'],badge:'',bc:''},
+  {id:'clubs',n:'Clubs & Events',ic:'🎭',bg:'#fce4ec',roles:['student','admin'],badge:'',bc:''},
+  {id:'mentoring',n:'Mentoring',ic:'🤝',bg:'#e8eaff',roles:['student','faculty','admin'],badge:'',bc:''},
+  {id:'circular',n:'Circular',ic:'📄',bg:'#faeeda',roles:['student','faculty','admin'],badge:'',bc:''},
+  {id:'transport',n:'Transport',ic:'🚌',bg:'#e1f5ee',roles:['student','admin'],badge:'',bc:''},
+  {id:'announcements',n:'Announcements',ic:'📢',bg:'#faeeda',roles:['student','faculty','admin'],badge:'3',bc:''},
+  {id:'fees',n:'Fees',ic:'💳',bg:'#ffebee',roles:['student','admin'],badge:'!',bc:'red'},
+  {id:'calendar',n:'Academic Calendar',ic:'🗓️',bg:'#e8eaff',roles:['student','faculty','admin'],badge:'',bc:''},
+  {id:'bus',n:'Bus Transport',ic:'🚍',bg:'#e1f5ee',roles:['student','admin'],badge:'',bc:''},
+  {id:'feedback',n:'Feedback',ic:'⭐',bg:'#faeeda',roles:['student','faculty','admin'],badge:'',bc:''},
+  {id:'notifications',n:'Notifications',ic:'🔔',bg:'#fce4ec',roles:['student','faculty','admin'],badge:'5',bc:'red'},
+];
+
+let dark=false,curRole='student';
+
+function toggleDark(){
+  dark=!dark;
+  document.body.classList.toggle('dark-mode',dark);
+  const t=dark?'☀️ Light':'🌙 Dark';
+  document.getElementById('dtbtn').textContent=t+' Mode';
+  const b2=document.getElementById('dtbtn2');
+  if(b2)b2.textContent=t;
+}
+
+function switchRole(r,btn){
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const map={student:'Student Login',faculty:'Faculty Login',admin:'Admin Login'};
+  document.getElementById('lc-sub-text').textContent=map[r];
+}
+
+function doLogin(){
+  const u=document.getElementById('usn').value.trim().toUpperCase();
+  const p=document.getElementById('pwd').value.trim();
+  const e=document.getElementById('lerr');
+  const match=Object.keys(USERS).find(k=>k.toUpperCase()===u);
+  if(!match||USERS[match].p!==p){e.style.display='block';return;}
+  e.style.display='none';
+  const usr=USERS[match];
+  curRole=usr.role;
+  document.getElementById('sname').textContent=usr.name;
+  document.getElementById('smeta').textContent=usr.meta;
+  document.getElementById('av').textContent=usr.av;
+  document.getElementById('greet').textContent='Welcome back, '+usr.name.split(' ')[0]+'! Here\'s your campus at a glance.';
+  document.getElementById('adminbar').style.display=usr.role==='admin'?'flex':'none';
+  document.getElementById('login-screen').classList.remove('active');
+  document.getElementById('app-screen').classList.add('active');
+  renderGrid(curRole);
+}
+
+function logout(){
+  document.getElementById('app-screen').classList.remove('active');
+  document.getElementById('login-screen').classList.add('active');
+  document.getElementById('usn').value='';
+  document.getElementById('pwd').value='';
+  goHome();
+}
+
+function setAdminRole(r,btn){
+  curRole=r;
+  document.querySelectorAll('.ar-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid(r);goHome();
+}
+
+function renderGrid(role){
+  const g=document.getElementById('mgrid');
+  g.innerHTML=MODS.filter(m=>m.roles.includes(role)).map(m=>`
+    <div class="mod-card" onclick="openMod('${m.id}')">
+      ${m.badge?`<div class="mod-badge ${m.bc}">${m.badge}</div>`:''}
+      <div class="mod-icon-box" style="background:${m.bg}">${m.ic}</div>
+      <div class="mod-name">${m.n}</div>
+    </div>`).join('');
+}
+
+function goHome(){
+  document.getElementById('dash').style.display='block';
+  document.getElementById('detpanel').classList.remove('on');
+  document.getElementById('detpanel').style.display='none';
+}
+
+function openMod(id){
+  document.getElementById('dash').style.display='none';
+  const dp=document.getElementById('detpanel');
+  dp.innerHTML=getContent(id);
+  dp.style.display='block';
+  dp.classList.add('on');
+  initStars();
+}
+
+function back(){goHome();}
+
+function getContent(id){
+  const titles={attendance:'Attendance',timetable:'Timetable',notes:'Notes & Material',exams:'Exam Schedule',ia:'Internal Assessment',results:'Results',clubs:'Clubs & Events',mentoring:'Mentoring',circular:'Circular',transport:'Transport',announcements:'Announcements',fees:'Fees',calendar:'Academic Calendar',bus:'Bus Transport',feedback:'Feedback',notifications:'Notifications'};
+  const h=`<div class="dh"><button class="back" onclick="back()">←</button><div class="dtitle">${titles[id]}</div></div>`;
+
+  if(id==='attendance')return h+`
+    <div class="sc-row">
+      <div class="sc"><div class="sc-l">Overall</div><div class="sc-v ok">82%</div><div class="sc-s">Above minimum 75%</div></div>
+      <div class="sc"><div class="sc-l">Attended</div><div class="sc-v">148</div><div class="sc-s">of 180 held</div></div>
+      <div class="sc"><div class="sc-l">Can Miss</div><div class="sc-v">12</div><div class="sc-s">more classes</div></div>
+      <div class="sc"><div class="sc-l">Low Subjects</div><div class="sc-v bad">2</div><div class="sc-s">Below 75%</div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Subject-wise Attendance (Per Class)</div>
+      ${[['Data Structures','42','48','88','ok'],['DBMS','38','45','84','ok'],['Operating Systems','29','38','76','warn'],['Computer Networks','27','38','71','bad'],['Engg. Maths','32','35','91','ok'],['Soft Skills','10','12','83','ok']].map(([s,p,t,pc,st])=>`
+      <div class="ar">
+        <div class="at"><span style="font-weight:600">${s}</span><span class="pill ${st==='ok'?'pg':st==='warn'?'pa':'pr'}">${pc}% · ${p}/${t}</span></div>
+        <div class="ab"><div class="af" style="width:${pc}%;background:${st==='ok'?'#1d9e75':st==='warn'?'#ef9f27':'#e24b4a'}"></div></div>
+      </div>`).join('')}
+    </div>`;
+
+  if(id==='timetable')return h+`
+    <div class="card">
+      <div class="ct">Weekly Timetable — Sem 6 CSE Sec A</div>
+      <div class="ttg">
+        <div></div>
+        ${['Mon','Tue','Wed','Thu','Fri'].map(d=>`<div class="tth">${d}</div>`).join('')}
+        ${[['09–10','DS','DBMS','OS Lab','CN','Maths'],['10–11','DBMS','DS','—','OS Lab','DS'],['11–12','OS Lab','Maths','CN','DBMS','—'],['12–1','Maths','—','DS','Maths','CN'],['2–3','CN','SS','DBMS','DS','OS Lab']].map(([t,...cs])=>
+          `<div class="ttt">${t}</div>${cs.map(c=>`<div class="ttc ${c!=='—'?'h':''}">${c}</div>`).join('')}`
+        ).join('')}
+      </div>
+    </div>`;
+
+  if(id==='notes')return h+`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+    ${[{s:'Data Structures',f:['Unit 1 – Arrays.pdf','Unit 2 – Trees.pdf','PYQ.pdf']},{s:'DBMS',f:['Normalization.pdf','SQL Ref.pdf','ER Diagrams.pdf']},{s:'OS',f:['Process Mgmt.pdf','Memory Mgmt.pdf','Lab Manual.pdf']},{s:'Networks',f:['OSI Model.pdf','TCP-IP.pdf','Numericals.pdf']},{s:'Maths',f:['Module 1.pdf','Module 2.pdf','Formulas.pdf']},{s:'Soft Skills',f:['Resume Writing.pdf','GD Tips.pdf']}].map(({s,f})=>`
+    <div class="card" style="margin-bottom:0">
+      <div class="ct">${s}</div>
+      ${f.map(fi=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #f0f2ff;font-size:12px;cursor:pointer;color:#333"><span style="font-size:15px">📎</span>${fi}</div>`).join('')}
+    </div>`).join('')}
+    </div>`;
+
+  if(id==='exams')return h+`
+    <div class="card">
+      <div class="ct">Mid-Semester Exams — Sem 6</div>
+      ${[['07','Apr','DBMS','10:00 AM','Room 201'],['09','Apr','Data Structures','10:00 AM','Room 301'],['11','Apr','OS','02:00 PM','Lab 2'],['14','Apr','Networks','10:00 AM','Room 204'],['16','Apr','Maths','02:00 PM','Room 301']].map(([d,m,sub,time,room])=>`
+      <div class="ev-item">
+        <div class="ev-dt"><div class="ev-day">${d}</div><div class="ev-mon">${m}</div></div>
+        <div><div style="font-size:13px;font-weight:700;color:#111;margin-bottom:2px">${sub}</div><div style="font-size:11px;color:#888">${time} · ${room}</div></div>
+        <span class="pill pn" style="margin-left:auto">${Math.max(1,parseInt(d)-30)} days</span>
+      </div>`).join('')}
+    </div>`;
+
+  if(id==='ia')return h+`
+    <div class="card">
+      <div class="ct">Internal Assessment Marks — Sem 6</div>
+      <div class="row" style="grid-template-columns:1fr 70px 70px 70px;border-top:none;padding-top:0">
+        <span style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase">Subject</span>
+        <span style="font-size:10px;font-weight:700;color:#999;text-align:right">IA 1</span>
+        <span style="font-size:10px;font-weight:700;color:#999;text-align:right">IA 2</span>
+        <span style="font-size:10px;font-weight:700;color:#999;text-align:right">Best</span>
+      </div>
+      ${[['Data Structures','18/20','19/20','19'],['DBMS','17/20','—','17'],['OS','15/20','—','15'],['Networks','16/20','—','16'],['Maths','20/20','—','20']].map(([s,i1,i2,b])=>`
+      <div class="row" style="grid-template-columns:1fr 70px 70px 70px">
+        <span style="font-weight:600;font-size:12px">${s}</span>
+        <span style="text-align:right;color:#666;font-size:12px">${i1}</span>
+        <span style="text-align:right;color:#666;font-size:12px">${i2}</span>
+        <span style="text-align:right;font-weight:700;color:#1a237e;font-size:12px">${b}/20</span>
+      </div>`).join('')}
+    </div>`;
+
+  if(id==='results')return h+`
+    <div class="sc-row">
+      <div class="sc"><div class="sc-l">CGPA</div><div class="sc-v">8.4</div><div class="sc-s">Sem 5</div></div>
+      <div class="sc"><div class="sc-l">SGPA Sem 5</div><div class="sc-v ok">8.7</div><div class="sc-s">Best so far</div></div>
+      <div class="sc"><div class="sc-l">Backlogs</div><div class="sc-v ok">0</div><div class="sc-s">All clear</div></div>
+      <div class="sc"><div class="sc-l">Rank</div><div class="sc-v">14</div><div class="sc-s">of 120 students</div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Semester 5 Results</div>
+      ${[['Data Structures','92','O'],['DBMS','84','A+'],['OS','78','A'],['Networks','76','A'],['Maths','88','A+'],['Soft Skills','91','O']].map(([s,m,g])=>`
+      <div class="row" style="grid-template-columns:1fr 80px 50px">
+        <span style="font-weight:600;font-size:12px">${s}</span>
+        <span style="text-align:right;color:#666;font-size:12px">${m}/100</span>
+        <span style="text-align:right"><span class="pill ${g==='O'?'pg':'pn'}">${g}</span></span>
+      </div>`).join('')}
+    </div>`;
+
+  if(id==='clubs')return h+`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    ${[{n:'IEEE Student Branch',tag:'Technical',ev:'Quiz — Apr 4',m:'48 members'},{n:'E-Cell',tag:'Business',ev:'Startup Pitch — Apr 10',m:'62 members'},{n:'Cultural Committee',tag:'Cultural',ev:'Cultural Night — Apr 8',m:'95 members'},{n:'NSS',tag:'Social',ev:'Blood Donation — Apr 5',m:'120 members'},{n:'Sports Club',tag:'Sports',ev:'Cricket — Apr 12',m:'80 members'},{n:'Photography Club',tag:'Creative',ev:'Campus Shoot — Apr 6',m:'35 members'}].map(({n,tag,ev,m})=>`
+    <div class="card" style="margin-bottom:0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:700">${n}</div>
+        <span class="pill pn">${tag}</span>
+      </div>
+      <div style="font-size:11px;color:#888;margin-bottom:3px">Next: ${ev}</div>
+      <div style="font-size:11px;color:#aaa">${m}</div>
+    </div>`).join('')}
+    </div>`;
+
+  if(id==='mentoring')return h+`
+    <div class="two">
+      <div class="card" style="margin-bottom:0">
+        <div class="ct">My Mentor</div>
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+          <div style="width:44px;height:44px;border-radius:50%;background:#e8eaff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#1a237e;flex-shrink:0">PK</div>
+          <div><div style="font-size:14px;font-weight:700">Dr. Priya Kumar</div><div style="font-size:11px;color:#888">Assoc. Prof · CSE · Cabin B-204</div></div>
+        </div>
+        <div style="font-size:12px;color:#888;margin-bottom:6px">Next session: Apr 2, 2026</div>
+        <button style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer">Book Session</button>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="ct">Session History</div>
+        ${[['Mar 12','Academic Performance'],['Feb 28','Career Guidance'],['Feb 5','Attendance Review']].map(([d,t])=>`
+        <div class="ev-item" style="padding:8px 0">
+          <div style="width:32px;height:32px;border-radius:8px;background:#e8eaff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">✓</div>
+          <div><div style="font-size:12px;font-weight:600">${t}</div><div style="font-size:11px;color:#888">${d}</div></div>
+          <span class="pill pg" style="margin-left:auto">Done</span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+
+  if(id==='fees')return h+`
+    <div class="sc-row">
+      <div class="sc"><div class="sc-l">Total</div><div class="sc-v">₹72,000</div><div class="sc-s">AY 2025–26</div></div>
+      <div class="sc"><div class="sc-l">Paid</div><div class="sc-v ok">₹59,600</div><div class="sc-s">83% paid</div></div>
+      <div class="sc"><div class="sc-l">Due</div><div class="sc-v warn">₹12,400</div><div class="sc-s">Due Apr 15</div></div>
+      <div class="sc"><div class="sc-l">Fine</div><div class="sc-v ok">₹0</div><div class="sc-s">No penalty yet</div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Fee Breakdown</div>
+      ${[['Tuition Fee','₹48,000','Paid'],['Development Fee','₹8,000','Paid'],['Exam Fee','₹3,600','Paid'],['Library Fee','₹800','Paid'],['Semester 2 Fees','₹12,400','Pending']].map(([n,a,st])=>`
+      <div class="row" style="grid-template-columns:1fr 80px 70px">
+        <span style="font-size:12px;font-weight:600">${n}</span>
+        <span style="text-align:right;font-size:12px;font-weight:700">${a}</span>
+        <span style="text-align:right"><span class="pill ${st==='Paid'?'pg':'pr'}">${st}</span></span>
+      </div>`).join('')}
+    </div>`;
+
+  if(id==='calendar')return h+`
+    <div class="two">
+      <div class="card" style="margin-bottom:0">
+        <div class="ct">March – April 2026</div>
+        <div class="cg">
+          ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="ch">${d}</div>`).join('')}
+          <div class="cd ot"></div><div class="cd ot"></div>
+          ${Array.from({length:31},(_,i)=>{const d=i+1;return `<div class="cd ${d===30?'today':d===14||d===21?'hol':d===4||d===7||d===12?'ev':''}">${d}</div>`;}).join('')}
+        </div>
+        <div style="display:flex;gap:14px;margin-top:10px;font-size:10px;color:#888">
+          <span>■ Today &nbsp; <span style="color:#c62828">■</span> Holiday &nbsp; <span style="color:#e8821a">●</span> Event</span>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="ct">Key Dates</div>
+        ${[['Apr 7–17','Mid-semester Exams','Academic'],['Apr 18','Results Declaration','Academic'],['Apr 22','Fee Last Date','Admin'],['May 1','Summer Internship','Placement'],['Jun 1','Sem 7 Begins','Academic']].map(([dt,ev,tag])=>`
+        <div class="ev-item" style="padding:8px 0">
+          <div><div style="font-size:12px;font-weight:700">${ev}</div><div style="font-size:11px;color:#888">${dt}</div></div>
+          <span class="pill ${tag==='Academic'?'pn':tag==='Admin'?'pa':'pg'}" style="margin-left:auto">${tag}</span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+
+  if(id==='announcements')return h+`
+    <div class="card">
+      ${[['Mid-semester exam schedule released','Hall-tickets available from Apr 4 at admin office.','Academics','Mar 30','New'],['Library extended hours during exam week','Open until 10 PM from Apr 5–17.','Library','Mar 29','New'],['Hackathon registrations open','Team of 3–4, register by Apr 3.','Clubs','Mar 28','New'],['NPTEL enrollment extended','Last date now April 10.','Online Learning','Mar 27',''],['Holiday on Apr 14 (Ambedkar Jayanti)','All classes suspended.','Admin','Mar 25','']].map(([t,d,c,dt,isnew])=>`
+      <div style="padding:12px 0;border-top:1px solid #f0f2ff">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <div style="font-size:13px;font-weight:700">${t}</div>
+          ${isnew?`<span class="pill pn">New</span>`:''}
+        </div>
+        <div style="font-size:12px;color:#666;margin-bottom:3px">${d}</div>
+        <div style="font-size:10px;color:#aaa">${c} · ${dt}</div>
+      </div>`).join('')}
+    </div>`;
+
+  if(id==='circular')return h+`
+    <div class="card">
+      ${[['Exam Hall-ticket Distribution','Principal Office','Mar 28'],['Anti-Ragging Notice','Admin','Mar 25'],['Industrial Visit — Sem 6 CSE','HOD CSE','Mar 22'],['Updated Dress Code Policy','Admin','Mar 18'],['Summer Internship Guidelines','TPO','Mar 12']].map(([t,f,dt])=>`
+      <div style="padding:10px 0;border-top:1px solid #f0f2ff">
+        <div style="font-size:13px;font-weight:700;margin-bottom:3px">📄 ${t}</div>
+        <div style="font-size:11px;color:#888">${f} · ${dt}</div>
+      </div>`).join('')}
+    </div>`;
+
+  if(id==='transport'||id==='bus')return h+`
+    <div class="card">
+      <div class="ct">My Route — Route 7</div>
+      <div style="font-size:12px;color:#888;margin-bottom:12px">Bus No: KA01-AB-1234 · Dep: 7:30 AM</div>
+      ${[['Jayanagar Circle','7:30 AM','#1a237e'],['BTM Layout','7:45 AM','#888'],['Electronic City Ph1','8:00 AM','#888'],['College Gate','8:20 AM','#1d9e75']].map(([stop,time,col],i,a)=>`
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:3px 0">
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div style="width:12px;height:12px;border-radius:50%;background:${col};flex-shrink:0"></div>
+          ${i<a.length-1?`<div style="width:2px;height:20px;background:#e0e3f0;margin:1px 5px"></div>`:''}
+        </div>
+        <div style="padding-bottom:4px"><div style="font-size:12px;font-weight:700">${stop}</div><div style="font-size:11px;color:#aaa">${time}</div></div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="ct">All Routes</div>
+      ${[['Route 1','Kengeri → College · 6:45 AM'],['Route 3','Mysore Road → College · 7:00 AM'],['Route 5','Marathahalli → College · 7:15 AM'],['Route 7','Jayanagar → College · 7:30 AM']].map(([r,info])=>`
+      <div style="padding:8px 0;border-top:1px solid #f0f2ff">
+        <span style="font-weight:700;color:var(--navy)">${r}</span>
+        <div style="font-size:11px;color:#888;margin-top:2px">${info}</div>
+      </div>`).join('')}
+    </div>`;
+
+  if(id==='feedback')return h+`
+    <div class="two">
+      <div class="card" style="margin-bottom:0">
+        <div class="ct">Faculty Feedback</div>
+        ${['Data Structures · Dr. Meena','DBMS · Prof. Kumar','OS · Mr. Raj','Networks · Dr. Priya'].map((f,i)=>`
+        <div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:5px">${f}</div>
+          <div class="star-row" data-q="${i}">
+            ${[1,2,3,4,5].map(s=>`<span class="star ${s<=4?'lit':''}" onclick="rateStar(${i},${s})">★</span>`).join('')}
+          </div>
+        </div>`).join('')}
+        <button style="background:var(--yellow);color:#222;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer">Submit Feedback</button>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="ct">Infrastructure Feedback</div>
+        ${['Classroom Quality','Lab Facilities','Library','Canteen','Sports Facilities'].map((f,i)=>`
+        <div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:5px">${f}</div>
+          <div class="star-row" data-q="inf${i}">
+            ${[1,2,3,4,5].map(s=>`<span class="star ${s<=3?'lit':''}" onclick="rateStar('inf${i}',${s})">★</span>`).join('')}
+          </div>
+        </div>`).join('')}
+        <button style="background:var(--yellow);color:#222;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer">Submit Feedback</button>
+      </div>
+    </div>`;
+
+  if(id==='notifications')return h+`
+    <div class="card">
+      ${[['📋','Attendance Alert','Your Networks attendance is 71% — below minimum.','2 min ago','red'],['📝','Exam Reminder','DBMS exam on Apr 7. Hall-ticket available.','1 hr ago',''],['💳','Fee Due','Semester 2 fee of ₹12,400 due on Apr 15.','3 hrs ago','red'],['📢','Announcement','Library extended hours during exam week.','Yesterday',''],['🎭','Club Event','IEEE Quiz registration closes tomorrow.','Yesterday',''],['📄','New Circular','Industrial visit form — submit by Apr 1.','2 days ago','']].map(([ic,t,b,time,u])=>`
+      <div style="display:flex;gap:12px;padding:11px 0;border-top:1px solid #f0f2ff;align-items:flex-start">
+        <div style="width:34px;height:34px;border-radius:8px;background:${u?'#ffebee':'#f0f2ff'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${ic}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">${t}</div>
+          <div style="font-size:11px;color:#888;margin-bottom:2px">${b}</div>
+          <div style="font-size:10px;color:#bbb">${time}</div>
+        </div>
+        ${u?`<span class="pill pr" style="flex-shrink:0">Action needed</span>`:''}
+      </div>`).join('')}
+    </div>`;
+
+  return h+`<div class="card"><div style="color:#888;font-size:13px;padding:20px;text-align:center">Content for this module will be displayed here.</div></div>`;
+}
+
+function initStars(){
+  document.querySelectorAll('.star').forEach(s=>{
+    s.onmouseenter=function(){
+      const row=this.parentElement;const stars=[...row.children];const i=stars.indexOf(this);
+      stars.forEach((st,j)=>st.classList.toggle('lit',j<=i));
+    };
+    s.onmouseleave=function(){
+      const row=this.parentElement;const stars=[...row.children];
+      stars.forEach(st=>st.classList.remove('lit'));
+    };
+  });
+}
+
+function rateStar(q,v){
+  const rows=document.querySelectorAll('.star-row');
+  rows.forEach(row=>{
+    if(row.dataset.q==q){
+      [...row.children].forEach((s,i)=>s.classList.toggle('lit',i<v));
+    }
+  });
+}
+</script>

@@ -1,0 +1,402 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: JCETHub API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication
+  - name: students
+    description: Student operations
+  - name: attendance
+    description: Attendance tracking
+  - name: marks
+    description: Marks and results
+  - name: notifications
+    description: Notifications and announcements
+  - name: timetable
+    description: Timetable management
+  - name: dashboard
+    description: Dashboard summary
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login with USN and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /students/me:
+    get:
+      operationId: getStudentProfile
+      tags: [students]
+      summary: Get current student profile
+      responses:
+        "200":
+          description: Student profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentProfile"
+
+  /attendance/me:
+    get:
+      operationId: getMyAttendance
+      tags: [attendance]
+      summary: Get attendance for logged-in student
+      responses:
+        "200":
+          description: Subject-wise attendance
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AttendanceRecord"
+
+  /marks/me:
+    get:
+      operationId: getMyMarks
+      tags: [marks]
+      summary: Get marks for logged-in student
+      responses:
+        "200":
+          description: Subject-wise marks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MarksRecord"
+
+  /notifications:
+    get:
+      operationId: getNotifications
+      tags: [notifications]
+      summary: Get all notifications
+      responses:
+        "200":
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /timetable:
+    get:
+      operationId: getTimetable
+      tags: [timetable]
+      summary: Get weekly timetable
+      parameters:
+        - in: query
+          name: semester
+          schema:
+            type: string
+        - in: query
+          name: branch
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Weekly timetable
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimetableEntry"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/events:
+    get:
+      operationId: getUpcomingEvents
+      tags: [dashboard]
+      summary: Get upcoming college events
+      responses:
+        "200":
+          description: List of upcoming events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CollegeEvent"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    LoginRequest:
+      type: object
+      properties:
+        usn:
+          type: string
+          description: University Seat Number
+        password:
+          type: string
+        role:
+          type: string
+          enum: [student, faculty, admin]
+          default: student
+      required:
+        - usn
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/StudentProfile"
+      required:
+        - token
+        - user
+
+    StudentProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        usn:
+          type: string
+        name:
+          type: string
+        branch:
+          type: string
+        semester:
+          type: string
+        role:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        avatarInitials:
+          type: string
+      required:
+        - id
+        - usn
+        - name
+        - branch
+        - semester
+        - role
+
+    AttendanceRecord:
+      type: object
+      properties:
+        subject:
+          type: string
+        subjectCode:
+          type: string
+        attended:
+          type: number
+        total:
+          type: number
+        percentage:
+          type: number
+        status:
+          type: string
+          enum: [safe, warning, low]
+      required:
+        - subject
+        - subjectCode
+        - attended
+        - total
+        - percentage
+        - status
+
+    MarksRecord:
+      type: object
+      properties:
+        subject:
+          type: string
+        subjectCode:
+          type: string
+        ia1:
+          type: number
+        ia2:
+          type: number
+        ia3:
+          type: number
+        finalMarks:
+          type: number
+        maxMarks:
+          type: number
+        grade:
+          type: string
+      required:
+        - subject
+        - subjectCode
+        - ia1
+        - ia2
+        - ia3
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        message:
+          type: string
+        type:
+          type: string
+          enum: [announcement, alert, event, exam]
+        createdAt:
+          type: string
+          format: date-time
+        isRead:
+          type: boolean
+      required:
+        - id
+        - title
+        - message
+        - type
+        - createdAt
+        - isRead
+
+    TimetableEntry:
+      type: object
+      properties:
+        day:
+          type: string
+          enum: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+        period:
+          type: number
+        startTime:
+          type: string
+        endTime:
+          type: string
+        subject:
+          type: string
+        subjectCode:
+          type: string
+        faculty:
+          type: string
+        room:
+          type: string
+      required:
+        - day
+        - period
+        - startTime
+        - endTime
+        - subject
+
+    DashboardSummary:
+      type: object
+      properties:
+        overallAttendance:
+          type: number
+        cgpa:
+          type: number
+        pendingAssignments:
+          type: number
+        unreadNotifications:
+          type: number
+        currentSemester:
+          type: string
+        nextExamDays:
+          type: number
+        creditsCompleted:
+          type: number
+        creditsTotal:
+          type: number
+      required:
+        - overallAttendance
+        - cgpa
+        - pendingAssignments
+        - unreadNotifications
+        - currentSemester
+
+    CollegeEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date
+        type:
+          type: string
+          enum: [exam, holiday, cultural, sports, academic, workshop]
+        venue:
+          type: string
+      required:
+        - id
+        - title
+        - date
+        - type
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+        - message

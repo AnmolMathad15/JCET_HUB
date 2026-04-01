@@ -1,0 +1,155 @@
+Act as a senior backend engineer.
+
+Build a complete production-ready backend for a Smart Campus Web App called "JCETHub" (Jain College of Engineering & Technology Hub).
+
+TECH STACK:
+- Node.js
+- Express.js
+- MongoDB (Mongoose)
+- JWT Authentication
+- bcrypt for password hashing
+- dotenv for environment variables
+- CORS enabled
+
+The code should be clean, modular, scalable, and structured like a real-world project.
+
+-------------------------------------
+
+PROJECT STRUCTURE:
+
+Create the following folder structure:
+
+/jcethub-backend
+│
+├── server.js
+├── .env
+├── config/
+│   └── db.js
+│
+├── models/
+│   ├── User.js
+│   ├── Attendance.js
+│   ├── Marks.js
+│   ├── Notification.js
+│
+├── routes/
+│   ├── auth.js
+│   ├── attendance.js
+│   ├── marks.js
+│   ├── notification.js
+│
+├── middleware/
+│   └── authMiddleware.js
+
+-------------------------------------
+
+FEATURE REQUIREMENTS:
+
+1. AUTHENTICATION SYSTEM
+- Login using USN/ID + password
+- Password stored using bcrypt hash
+- Generate JWT token on login
+- Middleware to protect routes
+- Role-based access (student, faculty, admin)
+
+2. USER MODEL
+Fields:
+- usn (unique)
+- password
+- role (student/faculty/admin)
+- name
+- branch
+- semester
+
+-------------------------------------
+
+3. ATTENDANCE MODULE
+- Store subject-wise attendance
+- Fields:
+  - userId
+  - subject
+  - attendedClasses
+  - totalClasses
+- APIs:
+  - GET student attendance
+  - UPDATE attendance (faculty/admin)
+
+-------------------------------------
+
+4. MARKS MODULE (IA + RESULTS)
+- Store IA marks and final results
+- Fields:
+  - userId
+  - subject
+  - ia1
+  - ia2
+  - finalMarks
+- APIs:
+  - GET marks
+  - UPDATE marks (faculty/admin)
+
+-------------------------------------
+
+5. NOTIFICATIONS MODULE
+- Store announcements and alerts
+- Fields:
+  - title
+  - message
+  - type (announcement / alert)
+  - createdAt
+- APIs:
+  - GET all notifications
+  - CREATE notification (admin only)
+
+-------------------------------------
+
+6. SECURITY
+- JWT middleware for protected routes
+- Role-based authorization
+- Input validation (basic)
+
+-------------------------------------
+
+7. DATABASE
+- Use MongoDB Atlas connection via .env
+- Example:
+  MONGO_URI=your_connection_string
+  JWT_SECRET=your_secret
+
+-------------------------------------
+
+8. SERVER SETUP
+- Express server
+- Use middleware (cors, json)
+- Connect MongoDB
+- Use all routes properly
+- Run on port 5000
+
+-------------------------------------
+
+9. BONUS (IMPORTANT)
+- Add sample dummy data seeding
+- Add comments explaining code
+- Error handling (try/catch)
+- Clean API responses (JSON format)
+
+-------------------------------------
+
+OUTPUT FORMAT:
+
+- Provide FULL code for all files
+- No missing imports
+- No placeholders like "add your code here"
+- Ready to run on Replit after copy-paste
+
+-------------------------------------
+
+GOAL:
+
+This backend should be strong enough to:
+- Connect with a frontend React app
+- Demonstrate full-stack skills in interviews
+- Be deployable and scalable
+
+DO NOT SIMPLIFY.
+BUILD LIKE A REAL PRODUCTION BACKEND.

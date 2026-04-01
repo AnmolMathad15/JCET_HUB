@@ -1,0 +1,46 @@
+import { Router, type IRouter } from "express";
+import healthRouter from "./health";
+import authRouter from "./auth";
+import studentsRouter from "./students";
+import attendanceRouter from "./attendance";
+import marksRouter from "./marks";
+import notificationsRouter from "./notifications";
+import timetableRouter from "./timetable";
+import dashboardRouter from "./dashboard";
+import academicCalendarRouter from "./academic-calendar";
+import examScheduleRouter from "./exam-schedule";
+import resultsRouter from "./results";
+import feesRouter from "./fees";
+import transportRouter from "./transport";
+import circularRouter from "./circular";
+import mentoringRouter from "./mentoring";
+import feedbackRouter from "./feedback";
+import notesRouter from "./notes";
+import adminRouter from "./admin";
+import assignmentsRouter from "./assignments";
+import eventsHubRouter from "./events-hub";
+
+const router: IRouter = Router();
+
+router.use(healthRouter);
+router.use(authRouter);
+router.use(studentsRouter);
+router.use(attendanceRouter);
+router.use(marksRouter);
+router.use(notificationsRouter);
+router.use(timetableRouter);
+router.use(dashboardRouter);
+router.use(academicCalendarRouter);
+router.use(examScheduleRouter);
+router.use(resultsRouter);
+router.use(feesRouter);
+router.use(transportRouter);
+router.use(circularRouter);
+router.use(mentoringRouter);
+router.use(feedbackRouter);
+router.use(notesRouter);
+router.use("/admin", adminRouter);
+router.use("/assignments", assignmentsRouter);
+router.use(eventsHubRouter);
+
+export default router;

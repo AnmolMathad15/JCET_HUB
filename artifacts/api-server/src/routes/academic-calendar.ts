@@ -1,0 +1,281 @@
+import { Router, type IRouter } from "express";
+
+const router: IRouter = Router();
+
+router.get("/academic-calendar", (_req, res) => {
+  res.json([
+    // ── JANUARY 2026 ──────────────────────────────────────────
+    {
+      id: "j1",
+      title: "Makara Sankranti",
+      date: "2026-01-15",
+      category: "holiday",
+      description: "Festival holiday",
+    },
+    {
+      id: "j2",
+      title: "Republic Day",
+      date: "2026-01-26",
+      category: "holiday",
+      description: "National holiday",
+    },
+    {
+      id: "j3",
+      title: "Commencement of 6th & 8th Semester",
+      date: "2026-01-27",
+      category: "academic",
+      description: "Classes commence for 6th Semester (Even) and 8th Semester (Even)",
+      important: true,
+    },
+
+    // ── FEBRUARY 2026 ─────────────────────────────────────────
+    {
+      id: "f1",
+      title: "Internship Review I – 8th Sem",
+      date: "2026-02-14",
+      category: "academic",
+      description: "First internship review for 8th semester students",
+    },
+    {
+      id: "f2",
+      title: "Maha Shivaratri",
+      date: "2026-02-15",
+      category: "holiday",
+      description: "Festival holiday",
+    },
+    {
+      id: "f3",
+      title: "Project Phase-I – 6th Sem",
+      date: "2026-02-19",
+      endDate: "2026-02-20",
+      category: "academic",
+      description: "Project Phase-I presentation / review for 6th semester students",
+    },
+
+    // ── MARCH 2026 ────────────────────────────────────────────
+    {
+      id: "m1",
+      title: "Pre Women's Day Celebration",
+      date: "2026-03-06",
+      category: "event",
+      description: "Campus event – Pre Women's Day celebration (6th Sem)",
+    },
+    {
+      id: "m2",
+      title: "International Women's Day",
+      date: "2026-03-08",
+      category: "event",
+      description: "Celebrated on campus",
+    },
+    {
+      id: "m3",
+      title: "1st Internal Assessment – 6th Sem",
+      date: "2026-03-13",
+      endDate: "2026-03-14",
+      category: "exam",
+      description: "IA-1 for all subjects – 6th Semester",
+      important: true,
+    },
+    {
+      id: "m4",
+      title: "1st Assignment Submission – 6th Sem",
+      date: "2026-03-14",
+      category: "academic",
+      description: "Deadline for 1st assignment submission (6th Semester)",
+    },
+    {
+      id: "m5",
+      title: "Internship Review II – 8th Sem",
+      date: "2026-03-14",
+      category: "academic",
+      description: "Second internship review for 8th semester students",
+    },
+    {
+      id: "m6",
+      title: "Technical Talk – 6th Sem",
+      date: "2026-03-17",
+      category: "event",
+      description: "Technical talk session for 6th semester students",
+    },
+    {
+      id: "m7",
+      title: "Ugadi",
+      date: "2026-03-19",
+      category: "holiday",
+      description: "Kannada/Telugu New Year – festival holiday",
+    },
+    {
+      id: "m8",
+      title: "Technical Events",
+      date: "2026-03-23",
+      endDate: "2026-03-24",
+      category: "event",
+      description: "Inter-department technical events on campus",
+    },
+    {
+      id: "m9",
+      title: "VAIBHAV 2k26 – College Fest",
+      date: "2026-03-27",
+      endDate: "2026-03-28",
+      category: "event",
+      description: "Annual college cultural and technical extravaganza – VAIBHAV 2k26",
+      important: true,
+    },
+    {
+      id: "m10",
+      title: "Mahaveer Jayanthi",
+      date: "2026-03-31",
+      category: "holiday",
+      description: "Festival holiday",
+    },
+
+    // ── APRIL 2026 ────────────────────────────────────────────
+    {
+      id: "a1",
+      title: "Good Friday",
+      date: "2026-04-02",
+      category: "holiday",
+      description: "National holiday",
+    },
+    {
+      id: "a2",
+      title: "Placement Training – 6th Sem",
+      date: "2026-04-06",
+      endDate: "2026-04-11",
+      category: "academic",
+      description: "Placement / aptitude training program for 6th semester students",
+    },
+    {
+      id: "a3",
+      title: "In-house PDP Sessions",
+      date: "2026-04-08",
+      endDate: "2026-04-10",
+      category: "event",
+      description: "In-house Personal Development Program sessions",
+    },
+    {
+      id: "a4",
+      title: "2nd Internal Assessment – 6th Sem",
+      date: "2026-04-13",
+      endDate: "2026-04-14",
+      category: "exam",
+      description: "IA-2 for all subjects – 6th Semester",
+      important: true,
+    },
+    {
+      id: "a5",
+      title: "Ambedkar Jayanthi",
+      date: "2026-04-14",
+      category: "holiday",
+      description: "National holiday",
+    },
+    {
+      id: "a6",
+      title: "Technical Talk – 6th Sem",
+      date: "2026-04-17",
+      category: "event",
+      description: "Second technical talk session for 6th semester students",
+    },
+    {
+      id: "a7",
+      title: "Basava Jayanthi",
+      date: "2026-04-20",
+      category: "holiday",
+      description: "State holiday",
+    },
+
+    // ── MAY 2026 ──────────────────────────────────────────────
+    {
+      id: "my1",
+      title: "Labour Day",
+      date: "2026-05-01",
+      category: "holiday",
+      description: "National holiday",
+    },
+    {
+      id: "my2",
+      title: "2nd Assignment Submission – 6th & 8th Sem",
+      date: "2026-05-04",
+      category: "academic",
+      description: "Deadline for 2nd assignment submission (both 6th and 8th Semester)",
+    },
+    {
+      id: "my3",
+      title: "Bakrid",
+      date: "2026-05-08",
+      category: "holiday",
+      description: "Festival holiday",
+    },
+    {
+      id: "my4",
+      title: "2nd Internal Assessment – 8th Sem",
+      date: "2026-05-08",
+      endDate: "2026-05-09",
+      category: "exam",
+      description: "IA-2 for all subjects – 8th Semester",
+      important: true,
+    },
+    {
+      id: "my5",
+      title: "Internship Review III – 8th Sem",
+      date: "2026-05-09",
+      category: "academic",
+      description: "Third and final internship review for 8th semester students",
+    },
+    {
+      id: "my6",
+      title: "Last Working Day – 8th Sem",
+      date: "2026-05-09",
+      category: "academic",
+      description: "Last day of instruction for 8th semester",
+      important: true,
+    },
+    {
+      id: "my7",
+      title: "Lab IA – 6th Sem",
+      date: "2026-05-13",
+      endDate: "2026-05-14",
+      category: "exam",
+      description: "Laboratory Internal Assessment for 6th semester",
+    },
+    {
+      id: "my8",
+      title: "Last Working Day – 6th Sem",
+      date: "2026-05-16",
+      category: "academic",
+      description: "Last day of instruction for 6th semester",
+      important: true,
+    },
+    {
+      id: "my9",
+      title: "Theory Examinations – 8th Sem",
+      date: "2026-05-11",
+      endDate: "2026-05-30",
+      category: "exam",
+      description: "End-semester theory examinations – 8th Semester",
+      important: true,
+    },
+    {
+      id: "my10",
+      title: "Practical Examinations – 6th Sem",
+      date: "2026-05-18",
+      endDate: "2026-05-29",
+      category: "exam",
+      description: "End-semester practical / lab examinations – 6th Semester",
+      important: true,
+    },
+
+    // ── JUNE 2026 ─────────────────────────────────────────────
+    {
+      id: "jn1",
+      title: "Theory Examinations – 6th Sem",
+      date: "2026-06-01",
+      endDate: "2026-06-26",
+      category: "exam",
+      description: "End-semester theory examinations – 6th Semester",
+      important: true,
+    },
+  ]);
+});
+
+export default router;

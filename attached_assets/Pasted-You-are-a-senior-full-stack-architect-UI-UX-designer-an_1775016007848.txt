@@ -1,0 +1,221 @@
+You are a senior full-stack architect, UI/UX designer, and AI systems expert.
+
+Your task is to UPGRADE and INTEGRATE a powerful "Event & Extracurricular Hub" into an existing platform called **JCET Hub**, transforming it into a complete campus ecosystem.
+
+⚠️ IMPORTANT CONTEXT:
+JCET Hub already includes:
+
+* Student login/authentication system
+* Assignment submission system (separate database per student)
+* Teacher dashboards
+* Role-based access (student, faculty)
+
+Your goal is to design this new module as:
+
+* Fully integrated with JCET Hub (shared users, UI, auth)
+* But modular internally (clean architecture, scalable, future SaaS-ready)
+
+---
+
+🎯 PROBLEM TO SOLVE:
+Campus events, workshops, and extracurricular activities are fragmented across WhatsApp groups and social media, leading to:
+
+* Low student participation
+* Missed opportunities
+* No centralized discovery
+* No verified record of participation
+* Students unable to showcase extracurricular achievements to recruiters
+
+---
+
+💡 SOLUTION TO BUILD:
+Design a **Unified Event & Extracurricular Module** that includes:
+
+1. 📅 EVENT DISCOVERY SYSTEM
+
+* Centralized event listing (all clubs, departments)
+* Smart filters (domain, skill, date, popularity)
+* AI-based recommendations based on:
+
+  * student interests
+  * past participation
+  * career goals (SDE, AI, UI/UX, etc.)
+
+2. 🎟️ EVENT MANAGEMENT SYSTEM (FOR ORGANIZERS)
+
+* Create, edit, delete events
+* Add details (poster, description, deadline, seats)
+* Registration management
+* QR-based attendance tracking
+* Live participant count
+
+3. 🎮 GAMIFICATION SYSTEM
+
+* Campus Points (XP system)
+* Levels (Beginner → Pro → Elite)
+* Leaderboards (college / department)
+* Achievements & badges system
+
+4. ✅ VERIFIED ACHIEVEMENT SYSTEM
+
+* Each event generates:
+
+  * Verified badge
+  * Participation record
+* Faculty approval system
+* Optional blockchain-based certificate validation (bonus)
+
+5. 📄 AUTO EXTRACURRICULAR RESUME BUILDER
+
+* Auto-convert participation into:
+
+  * Skills
+  * Roles (Organizer, Volunteer, Participant)
+  * Achievements
+* Export to:
+
+  * PDF
+  * LinkedIn-ready format
+
+6. 🧑‍💼 RECRUITER / PLACEMENT VIEW (ADVANCED FEATURE)
+
+* Recruiters can:
+
+  * View verified student profiles
+  * Filter by skills + activities
+  * See real participation (not fake certificates)
+
+7. 📊 ANALYTICS DASHBOARD
+
+* For admin:
+
+  * engagement rate
+  * popular events
+  * student participation trends
+
+---
+
+🏗️ TECH REQUIREMENTS:
+
+Frontend:
+
+* React / Next.js
+* Responsive UI (mobile-first)
+* Clean dashboard-based UX
+
+Backend:
+
+* Node.js / Express OR Spring Boot
+* REST APIs (modular structure)
+
+Database:
+
+* MongoDB or PostgreSQL
+* Separate collections/tables:
+
+  * events
+  * registrations
+  * badges
+  * points
+  * achievements
+
+Authentication:
+
+* Reuse JCET Hub auth system
+
+AI:
+
+* Basic recommendation system:
+
+  * content-based filtering
+  * user activity-based suggestions
+
+---
+
+🏗️ ARCHITECTURE REQUIREMENTS:
+
+Design it as a MODULE inside JCET Hub:
+
+Routes:
+
+* /events
+* /events/:id
+* /dashboard/events
+* /profile/achievements
+* /leaderboard
+
+APIs:
+
+* /api/events
+* /api/register
+* /api/attendance
+* /api/points
+* /api/badges
+
+Ensure:
+
+* Scalability
+* Clean separation of concerns
+* Microservice-ready structure
+
+---
+
+🎨 UI/UX REQUIREMENTS:
+
+Design screens for:
+
+1. Student Event Feed (like Instagram + LinkedIn hybrid)
+2. Event Details Page
+3. Organizer Dashboard
+4. Leaderboard Page
+5. Profile + Achievements Page
+6. Resume Builder UI
+
+Focus on:
+
+* Modern UI
+* Gamified feel
+* Clean navigation
+* High engagement
+
+---
+
+⚡ ADVANCED FEATURES (FOR HACKATHON EDGE):
+
+* AI Career Assistant:
+  Suggest events based on career goal (SDE, ML, UI/UX)
+
+* Smart Notifications:
+  Deadline reminders, trending events
+
+* Multi-language support (India-focused)
+
+* Offline/low-data mode (for accessibility)
+
+---
+
+📦 OUTPUT FORMAT REQUIRED:
+
+1. System architecture diagram (text-based)
+2. Database schema (tables/collections)
+3. API structure
+4. UI screen descriptions
+5. Feature breakdown (MVP vs Advanced)
+6. 3-minute demo flow (what to show judges)
+
+---
+
+🎯 FINAL GOAL:
+
+Transform JCET Hub into a **"Campus Super App"** that:
+
+* Increases student engagement
+* Tracks real skills
+* Helps in placements
+* Scales to multiple colleges
+
+Make it production-ready, scalable, and hackathon-winning.
+
+---
+
+Now generate a complete, structured, and highly detailed solution.

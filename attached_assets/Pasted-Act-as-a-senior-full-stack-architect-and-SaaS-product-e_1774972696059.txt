@@ -1,0 +1,204 @@
+Act as a senior full-stack architect and SaaS product engineer.
+
+Upgrade my existing project "JCETHub" (Smart Campus Management System) into a production-level, scalable, real-time, multi-role web application that can be used commercially by colleges.
+
+IMPORTANT:
+- Do NOT simplify anything
+- Build like a real SaaS product (ERP system)
+- Focus on scalability, modularity, and real-world architecture
+
+-------------------------------------
+
+CORE REQUIREMENT:
+
+This platform must support 3 main roles:
+1. Student
+2. Faculty/Teacher
+3. Admin
+
+Each role must have strict data isolation and role-based access control.
+
+-------------------------------------
+
+DATABASE DESIGN (CRITICAL):
+
+DO NOT create separate databases per student.
+
+Instead implement a scalable multi-tenant structure using:
+
+Collections/Tables:
+- Users (students, teachers, admin)
+- Departments (CSE, ECE, Mechanical, etc.)
+- Batches (A1, A2, A3, etc.)
+- Subjects
+- Assignments
+- Submissions
+- Attendance
+- Marks
+- Fees
+- Notifications
+
+RELATIONSHIPS:
+- Each user belongs to a department + batch
+- Teachers belong to departments
+- Assignments belong to teacher + subject + batch
+- Submissions belong to assignment + student
+- Fees depend on admission type (KCET, Management, COMEDK)
+
+-------------------------------------
+
+ROLE-BASED ACCESS CONTROL:
+
+Student:
+- Can only see their own data
+- Submit assignments
+- View marks, attendance, fees
+- Receive notifications
+
+Teacher:
+- Can only see their assigned subjects and students
+- Create assignments
+- View ONLY submissions for their assignments
+- Update marks and attendance
+
+Admin:
+- Full control over everything
+- Manage students, teachers, departments, batches
+- Configure fee structures
+- Add/edit/delete any data
+
+-------------------------------------
+
+ASSIGNMENT SYSTEM (IMPORTANT):
+
+- Teachers create assignments for specific:
+  - Department
+  - Batch
+  - Subject
+
+- Students:
+  - Upload files (PDF, images)
+  - Submit before deadline
+
+- Visibility:
+  - Only the teacher who created the assignment can see submissions
+  - Other teachers cannot access them
+
+-------------------------------------
+
+DYNAMIC ADMIN PANEL (CORE FEATURE):
+
+Admin must be able to:
+
+- Add/Edit/Delete:
+  - Departments
+  - Batches
+  - Subjects
+  - Users
+
+- Configure:
+  - Fee structures based on admission type
+    (KCET / Management / COMEDK)
+
+- Assign:
+  - Teachers → subjects
+  - Students → batches
+
+- Filter users:
+  - By department
+  - By batch
+  - By year
+
+-------------------------------------
+
+REAL-TIME FEATURES:
+
+Use WebSockets / Socket.IO for:
+
+- Instant notifications
+- Assignment updates
+- Submission alerts to teachers
+- Fee payment updates
+
+-------------------------------------
+
+PAYMENT SYSTEM:
+
+- Integrate Razorpay or Stripe
+- Track payments per student
+- Generate receipts
+- Show pending/paid status
+
+-------------------------------------
+
+SEARCH & FILTER SYSTEM:
+
+- Filter students:
+  - Department-wise
+  - Batch-wise
+  - Year-wise
+
+- Filter teachers:
+  - Department-wise
+
+- Filter assignments:
+  - Subject-wise / teacher-wise
+
+-------------------------------------
+
+SECURITY:
+
+- JWT authentication
+- Password hashing (bcrypt)
+- Role-based middleware
+- Input validation
+- Protected routes
+
+-------------------------------------
+
+PERFORMANCE:
+
+- Pagination for large data
+- Optimized queries
+- Proper indexing
+- Lazy loading (frontend)
+
+-------------------------------------
+
+ARCHITECTURE:
+
+- Backend: Node.js + Express (modular structure)
+- Database: MongoDB (Mongoose schemas)
+- Frontend-ready APIs
+- Clean folder structure
+
+-------------------------------------
+
+BONUS (VERY IMPORTANT):
+
+- Add reusable services layer
+- Add error handling middleware
+- Add logging system
+- Add environment-based config
+- Make it deployment-ready
+
+-------------------------------------
+
+OUTPUT FORMAT:
+
+- Provide complete backend architecture
+- Include models, routes, controllers, middleware
+- No missing code
+- Ready to run on Replit or any cloud
+
+-------------------------------------
+
+GOAL:
+
+Transform JCETHub into:
+- A full-fledged College ERP system
+- A scalable SaaS product
+- A strong full-stack portfolio project
+
+DO NOT GIVE BASIC CODE.
+BUILD LIKE A REAL PRODUCTION SYSTEM.

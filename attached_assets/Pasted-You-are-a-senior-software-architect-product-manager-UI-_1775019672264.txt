@@ -1,0 +1,242 @@
+You are a senior software architect, product manager, UI/UX designer, and AI engineer.
+
+Your task is to design and upgrade a **production-ready, scalable, hackathon-winning system** by integrating a **Unified Event & Extracurricular Hub** into an existing platform called **JCET Hub**.
+
+---
+
+⚠️ CONTEXT:
+
+JCET Hub already includes:
+
+* Student authentication system
+* Role-based dashboards (Student, Faculty)
+* Assignment submission system (separate DB per student)
+* Basic backend + frontend structure
+
+The new system must:
+
+* Be FULLY INTEGRATED with JCET Hub (shared auth, UI, users)
+* Be MODULAR internally (clean architecture, scalable, microservice-ready)
+* Be designed like a **future startup SaaS product**
+
+---
+
+🎯 CORE PROBLEM:
+
+Campus extracurricular activities are fragmented across WhatsApp, Instagram, and notice boards, causing:
+
+* Low student engagement
+* Missed opportunities
+* No centralized discovery
+* No verified tracking of participation
+* No proof of skills for recruiters
+
+---
+
+💡 SOLUTION VISION:
+
+Design a **Campus Super App Module** that:
+
+* Centralizes all events
+* Gamifies participation
+* Verifies achievements
+* Auto-generates extracurricular resumes
+* Helps in placements
+
+---
+
+🧠 IMPORTANT: THINK LIKE A TOP 1% ENGINEER
+
+While generating the solution, you MUST consider ALL of the following:
+
+---
+
+👥 USER ROLES:
+
+* Student
+* Organizer (club/admin)
+* Faculty (verification authority)
+* Recruiter (optional advanced role)
+
+---
+
+📱 USER EXPERIENCE:
+
+* Mobile-first design
+* Minimal clicks (max 2–3 steps for actions)
+* Instagram + LinkedIn inspired UI
+* High engagement loops (notifications, rewards)
+
+---
+
+🏗️ SYSTEM DESIGN:
+
+* Modular architecture inside JCET Hub
+* Clean separation of concerns
+* RESTful APIs
+* Scalable and microservice-ready
+
+---
+
+🗄️ DATABASE DESIGN:
+Include well-structured schema for:
+
+* Users
+* Events
+* Registrations
+* Attendance
+* Points
+* Badges
+* Achievements
+
+Define relationships clearly.
+
+---
+
+🎟️ EVENT MANAGEMENT:
+
+* Create/edit/delete events
+* Registration system
+* Seat limits
+* QR-based attendance tracking
+* Live participant count
+
+---
+
+🎮 GAMIFICATION:
+
+* Campus Points (XP system)
+* Levels & progression
+* Leaderboards (global + department)
+* Achievement badges
+
+Include anti-cheat mechanisms.
+
+---
+
+✅ VERIFICATION SYSTEM:
+
+* QR attendance validation
+* Faculty approval
+* Tamper-proof achievements (optional blockchain)
+
+---
+
+🤖 AI FEATURES:
+
+* Event recommendation engine:
+  Based on:
+
+  * User interests
+  * Past activity
+  * Career goals
+
+---
+
+📄 RESUME BUILDER:
+
+* Convert activities into:
+
+  * Skills
+  * Roles
+  * Achievements
+* Export to PDF / LinkedIn-ready format
+
+---
+
+📊 ANALYTICS:
+
+* Engagement tracking
+* Popular events
+* Participation trends
+
+---
+
+🔔 NOTIFICATIONS:
+
+* Event reminders
+* Registration confirmations
+* Achievement unlock alerts
+
+---
+
+🔒 SECURITY:
+
+* JWT/OAuth authentication
+* Role-based access control
+* Input validation
+* Rate limiting
+
+---
+
+🌐 SCALABILITY:
+
+* Must support multiple colleges in future
+* Avoid hardcoding
+* Design for SaaS expansion
+
+---
+
+📱 RESPONSIVENESS:
+
+* Must work perfectly on mobile + desktop
+
+---
+
+⚙️ INTEGRATION:
+
+* Reuse JCET Hub authentication
+* Sync user data
+* Maintain UI consistency
+
+---
+
+🧪 TESTING:
+
+* Validate all flows:
+
+  * Registration
+  * Attendance
+  * Role permissions
+  * Edge cases
+
+---
+
+🚀 OUTPUT REQUIRED (VERY IMPORTANT):
+
+Generate a COMPLETE SYSTEM including:
+
+1. 🏗️ Architecture Diagram (text-based)
+2. 🗄️ Database Schema (tables/collections with fields)
+3. 🔌 API Endpoints (detailed list)
+4. 📱 UI Screens (detailed descriptions)
+5. 🎯 MVP vs Advanced Features breakdown
+6. 🔄 User Flow (step-by-step)
+7. 🎮 Gamification Logic (points, levels)
+8. 🤖 AI Recommendation Logic
+9. 🔐 Security Implementation
+10. ⚡ Scalability Strategy
+11. 🧪 Testing Strategy
+12. 🎤 3-Minute Hackathon Demo Script
+
+---
+
+🎯 FINAL GOAL:
+
+Transform JCET Hub into a **Campus Super App** that:
+
+* Boosts engagement
+* Tracks real skills
+* Improves placements
+* Scales across colleges
+
+Make it:
+
+* Practical
+* Buildable in hackathon timeframe (MVP)
+* Impressive for judges
+* Ready for future startup expansion
+
+---
+
+Now generate a highly detailed, structured, production-level solution.
