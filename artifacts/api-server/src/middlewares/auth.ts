@@ -84,6 +84,42 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
   res.status(401).json({ error: "unauthorized", message: "Authentication required" });
 }
 
+/** Like requireAuth but never rejects — attaches currentUser if valid token present */
+export async function optionalAuth(req: AuthRequest, res: Response, next: NextFunction) {
+  const authHeader = req.headers["authorization"];
+  const headerUserId = req.headers["x-user-id"] as string | undefined;
+
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.slice(7);
+    try {
+      const [session] = await db.select().from(sessionsTable).where(eq(sessionsTable.token, token));
+      if (session && session.expiresAt >= new Date()) {
+        const [user] = await db.select().from(usersTable).where(eq(usersTable.id, session.userId));
+        if (user) {
+          req.currentUser = {
+            id: user.id, usn: user.usn, name: user.name, role: user.role,
+            branch: user.branch, semester: user.semester,
+            departmentId: user.departmentId, batchId: user.batchId,
+          };
+        }
+      }
+    } catch {}
+  } else if (headerUserId) {
+    try {
+      const [user] = await db.select().from(usersTable).where(eq(usersTable.id, headerUserId));
+      if (user) {
+        req.currentUser = {
+          id: user.id, usn: user.usn, name: user.name, role: user.role,
+          branch: user.branch, semester: user.semester,
+          departmentId: user.departmentId, batchId: user.batchId,
+        };
+      }
+    } catch {}
+  }
+
+  next();
+}
+
 export function requireRole(...roles: string[]) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.currentUser) {

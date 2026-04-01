@@ -131,7 +131,7 @@ export default function EventsHub() {
   const qc = useQueryClient();
   const canManage = user?.role === "faculty" || user?.role === "admin";
 
-  const { data: rawEvents, isLoading, isError } = useApiGet<EventItem[]>("/events-hub", { retry: 0 });
+  const { data: rawEvents, isLoading, isError } = useApiGet<EventItem[]>("/events-hub", { retry: 1 });
 
   const isFallback = !isLoading && (!rawEvents || rawEvents.length === 0);
   const events = rawEvents && rawEvents.length > 0
@@ -392,7 +392,7 @@ export default function EventsHub() {
             <div>
               <span className="font-semibold">{isError ? "Server unavailable — " : "No live events yet — "}</span>
               {isError
-                ? "showing sample events below so you can explore the UI. Set VITE_API_URL for production backend."
+                ? "showing sample events. Please log in or refresh to connect to live data."
                 : "showing sample events. Faculty or Admin can create real events using the button above."}
             </div>
           </div>
