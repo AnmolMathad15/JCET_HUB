@@ -50,6 +50,19 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ## Packages
 
+### `artifacts/jcethub` (`@workspace/jcethub`)
+
+React + Vite frontend for JCETHub — Smart Campus ERP for JCET Hubballi.
+
+- Brand: navy `#1a237e`, amber `#E8821A`; Rajdhani 700 font for "JCET HUB"
+- Routes: `/` (login), `/dashboard`, `/dashboard/events-hub`, `/dashboard/events`, `/dashboard/achievements`, `/dashboard/resume`, `/dashboard/attendance`, `/dashboard/marks`, `/dashboard/notifications`, and more
+- Auth: Bearer token stored in `localStorage` key `auth_token`; user object in `localStorage` key `user`
+- Socket.IO: connects to `/api/socket.io` (proxied to port 8080). Live registration count updates via `event:registration_update { eventId, count, delta }`. Green pulsing "LIVE" badge on events.
+- Demo credentials: Student `2JH23CS001`/`student@001`, Faculty `FAC001`/`faculty@001`, Admin `ADMIN1`/`admin@001`
+- Key pages: Events Hub with gamification (XP/levels/badges), QR attendance, PDF resume builder, leaderboard
+
+**Important note**: Auth middleware sets `req.currentUser` (not `req.user`) — all backend route handlers must use `(req as any).currentUser` or `req.currentUser`.
+
 ### `artifacts/api-server` (`@workspace/api-server`)
 
 Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
