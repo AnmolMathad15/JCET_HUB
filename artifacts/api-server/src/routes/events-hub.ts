@@ -4,7 +4,7 @@ import {
   eventsTable, eventRegistrationsTable, campusPointsTable,
   studentBadgesTable, badgeDefinitionsTable, usersTable
 } from "@workspace/db/schema";
-import { eq, desc, asc, sql, and } from "drizzle-orm";
+import { eq, desc, asc, sql, and, inArray } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth";
 import { randomUUID } from "crypto";
 import { broadcastEventRegistration, broadcastAttendanceUpdate } from "../socket";
@@ -277,7 +277,7 @@ router.get("/leaderboard", requireAuth, async (req, res) => {
 
     const userIds = rows.map(r => r.studentId);
     const users = await db.select({ id: usersTable.id, name: usersTable.name, usn: usersTable.usn, branch: usersTable.branch, departmentId: usersTable.departmentId })
-      .from(usersTable).where(sql`${usersTable.id} = ANY(${userIds})`);
+      .from(usersTable).where(inArray(usersTable.id, userIds));
     const userMap = Object.fromEntries(users.map(u => [u.id, u]));
 
     const badgeCounts = await db.select({
