@@ -1,0 +1,162 @@
+You are a senior full-stack developer. Upgrade my existing "Campus Event & Extracurricular Hub" module inside my JCET Hub project WITHOUT changing the core idea, structure, or purpose.
+
+⚠️ IMPORTANT:
+
+* Do NOT change the concept
+* Do NOT remove any existing functionality
+* Only UPGRADE UI, structure, and completeness based on the problem statement
+* Ensure ALL required features are clearly represented in UI
+
+---
+
+🎯 GOAL:
+Make the "Campus Event & Extracurricular Hub" the FIRST and most important section on the dashboard and ensure it fully reflects:
+
+* Centralized event discovery
+* Gamification (points + badges)
+* QR-based attendance concept (UI placeholder)
+* Resume generation concept
+* Club/event management
+
+---
+
+🧩 TASKS:
+
+1. 🔝 MOVE MODULE TO TOP:
+   Ensure this module appears FIRST in Dashboard.jsx:
+
+```id="topfix"
+<EventsHub />
+```
+
+Place it above all other components.
+
+---
+
+2. 🧠 UPGRADE EXISTING EVENTS HUB UI (DO NOT REBUILD FROM SCRATCH)
+
+Enhance the current component by ADDING the following sections:
+
+---
+
+✅ SECTION A: HERO (KEEP EXISTING, IMPROVE DESIGN)
+
+* Title: Campus Events & Extracurricular Hub
+* Subtitle: Centralized platform for events, achievements & career growth
+* Add 2 buttons:
+
+  * Explore Events
+  * My Achievements
+
+---
+
+✅ SECTION B: PROBLEM SOLUTION VISIBILITY (VERY IMPORTANT)
+
+Add a small info strip or card that subtly reflects:
+
+* "No more scattered WhatsApp groups"
+* "All events in one place"
+* "Verified participation tracking"
+
+(This ensures judges SEE the problem is solved)
+
+---
+
+✅ SECTION C: EVENT DISCOVERY FEED
+
+* Dynamic event cards
+
+* Include:
+
+  * Title
+  * Date
+  * Category (Tech / Cultural / Workshop)
+  * Register button
+
+* Add FILTERS:
+
+  * All / Tech / Cultural / Workshop
+
+---
+
+✅ SECTION D: GAMIFICATION PANEL
+
+Show:
+
+* Campus Points
+* Badges Earned
+* Events Attended
+
+Add:
+
+* Progress bar or level indicator
+
+---
+
+✅ SECTION E: QR ATTENDANCE (UI ONLY)
+
+Add a card:
+
+* Title: "QR Attendance"
+* Text: "Scan QR at event to mark verified participation"
+* Add a dummy QR icon or placeholder
+
+---
+
+✅ SECTION F: EXTRACURRICULAR RESUME (IMPORTANT)
+
+Add a preview card:
+
+* Title: "My Activity Resume"
+* Show:
+
+  * Events attended count
+  * Skills gained (dummy tags)
+* Button: "Generate Resume"
+
+---
+
+✅ SECTION G: CLUB / ORGANIZER DASHBOARD PREVIEW
+
+Add a small section:
+
+* "For Organizers"
+* Show:
+
+  * Event participation count
+  * Engagement stats (dummy)
+
+---
+
+3. 🎨 UI IMPROVEMENTS:
+
+* Use Tailwind CSS only
+* Add:
+
+  * gradient backgrounds
+  * rounded-xl / 2xl cards
+  * shadows
+  * hover scale effects
+  * smooth transitions
+
+---
+
+4. 📱 RESPONSIVENESS:
+   Ensure mobile-friendly layout (grid → single column)
+
+---
+
+5. ⚙️ DATA (KEEP SIMPLE):
+
+Use mock data arrays but structure cleanly for future backend.
+
+---
+
+🎯 FINAL OUTPUT:
+
+* Same idea preserved
+* Feature-complete UI matching problem statement
+* Events Hub appears FIRST
+* Visually premium + structured
+
+DO NOT delete existing code — only enhance and extend.

@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "wouter";
 import Layout from "@/components/layout";
 import { useApiGet, apiFetch } from "@/lib/api";
 import { getUser } from "@/lib/auth";
@@ -9,7 +10,7 @@ import {
   X, Check, Eye, Ticket, IndianRupee, AlertCircle,
   ChevronRight, Info, Phone, Mail, BookOpen, CreditCard,
   FileText, Star, Sparkles, QrCode, TrendingUp, Target,
-  Trophy, Shield,
+  Trophy, Shield, Briefcase, BarChart3, Medal,
 } from "lucide-react";
 
 interface EventItem {
@@ -289,6 +290,145 @@ export default function EventsHub() {
                 <div className="text-xs text-orange-200 mt-0.5">XP Earned</div>
               </div>
             </div>
+            <div className="flex flex-wrap gap-3 mt-4">
+              <button
+                onClick={() => setActiveTab("all")}
+                className="flex items-center gap-2 bg-white text-[#1a237e] px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 active:scale-95">
+                <Target className="w-4 h-4" /> Explore Events
+              </button>
+              <Link href="/dashboard/achievements">
+                <span className="flex items-center gap-2 bg-[#E8821A]/20 border border-[#E8821A]/40 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-[#E8821A]/30 transition-all cursor-pointer">
+                  <Trophy className="w-4 h-4 text-[#E8821A]" /> My Achievements
+                </span>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Section B — Problem Solution Visibility */}
+        <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border border-emerald-200 rounded-2xl px-5 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              {[
+                { icon: "🚫", text: "No more scattered WhatsApp groups" },
+                { icon: "🗂️", text: "All events in one place" },
+                { icon: "✅", text: "Verified participation tracking" },
+              ].map(item => (
+                <div key={item.text} className="flex items-center gap-2 text-sm text-emerald-800 font-semibold">
+                  <span className="text-base">{item.icon}</span>
+                  <span>{item.text}</span>
+                </div>
+              ))}
+            </div>
+            <span className="text-xs bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-full shrink-0">
+              🎓 JCET Smart Campus
+            </span>
+          </div>
+        </div>
+
+        {/* Section D + E + F + G — Feature Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+          {/* Gamification Panel */}
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                <Trophy className="w-5 h-5 text-amber-600" />
+              </div>
+              <span className="text-[10px] bg-amber-200 text-amber-700 font-bold px-2 py-0.5 rounded-full">
+                Level {Math.floor(totalXP / 100) + 1}
+              </span>
+            </div>
+            <h4 className="font-bold text-gray-800 text-sm mb-0.5">Campus Points</h4>
+            <div className="text-2xl font-extrabold text-amber-600 mb-2">{totalXP} <span className="text-sm font-semibold text-amber-400">XP</span></div>
+            <div className="w-full bg-amber-100 rounded-full h-2 mb-1.5">
+              <div className="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full transition-all" style={{ width: `${Math.min(100, (totalXP % 100))}%` }} />
+            </div>
+            <div className="flex justify-between text-[10px] text-amber-600 font-medium mb-2">
+              <span>Progress to next level</span>
+              <span>{100 - (totalXP % 100)} XP left</span>
+            </div>
+            <div className="flex gap-2">
+              <div className="flex-1 bg-white rounded-lg px-2 py-1.5 text-center border border-amber-100">
+                <div className="font-bold text-amber-700 text-sm">{myEvents.filter(e => e.attended).length}</div>
+                <div className="text-[9px] text-gray-400">Attended</div>
+              </div>
+              <div className="flex-1 bg-white rounded-lg px-2 py-1.5 text-center border border-amber-100">
+                <div className="font-bold text-amber-700 text-sm">{myEvents.length}</div>
+                <div className="text-[9px] text-gray-400">Registered</div>
+              </div>
+            </div>
+          </div>
+
+          {/* QR Attendance */}
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mb-3">
+              <QrCode className="w-5 h-5 text-blue-600" />
+            </div>
+            <h4 className="font-bold text-gray-800 text-sm mb-1">QR Attendance</h4>
+            <p className="text-[11px] text-gray-500 mb-3 leading-relaxed">Scan QR at event entrance — instant verified participation, no manual registers</p>
+            <div className="bg-white rounded-xl p-3 border border-blue-100 flex items-center justify-center mb-2">
+              <div className="grid grid-cols-5 gap-0.5">
+                {[1,1,1,1,1, 1,0,0,0,1, 1,0,1,0,1, 1,0,0,0,1, 1,1,1,1,1].map((v, i) => (
+                  <div key={i} className={`w-2.5 h-2.5 rounded-[2px] ${v ? "bg-blue-700" : "bg-transparent"}`} />
+                ))}
+              </div>
+            </div>
+            <p className="text-[10px] text-blue-500 font-semibold text-center">Faculty scans → Attendance marked ✓</p>
+          </div>
+
+          {/* Extracurricular Resume */}
+          <Link href="/dashboard/resume">
+            <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer h-full flex flex-col">
+              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mb-3">
+                <Briefcase className="w-5 h-5 text-purple-600" />
+              </div>
+              <h4 className="font-bold text-gray-800 text-sm mb-1">My Activity Resume</h4>
+              <p className="text-[11px] text-gray-500 mb-2">{myEvents.filter(e => e.attended).length} events attended · auto-generated</p>
+              <div className="flex flex-wrap gap-1 mb-3 flex-1">
+                {["Problem Solving", "Teamwork", "Leadership", "Tech Skills"].map(s => (
+                  <span key={s} className="text-[9px] bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-semibold">{s}</span>
+                ))}
+              </div>
+              <div className="w-full py-2 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-[11px] font-bold rounded-xl text-center shadow-sm">
+                Generate Resume →
+              </div>
+            </div>
+          </Link>
+
+          {/* Club / Organizer Dashboard */}
+          <div className={`bg-gradient-to-br from-rose-50 to-pink-50 border rounded-2xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 ${canManage ? "border-rose-300" : "border-rose-100"}`}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-rose-600" />
+              </div>
+              {canManage && <span className="text-[10px] bg-rose-500 text-white font-bold px-2 py-0.5 rounded-full">Organizer</span>}
+            </div>
+            <h4 className="font-bold text-gray-800 text-sm mb-2">For Organizers</h4>
+            <div className="space-y-1.5 mb-3">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500">Total Registrations</span>
+                <span className="font-bold text-rose-600">{events.reduce((s, e) => s + e.registrationCount, 0)}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500">Active Events</span>
+                <span className="font-bold text-rose-600">{upcomingCount}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500">Avg Engagement</span>
+                <span className="font-bold text-rose-600">
+                  ~{events.length > 0 ? Math.round(events.reduce((s, e) => s + e.registrationCount, 0) / events.length) : 0} / event
+                </span>
+              </div>
+            </div>
+            {canManage ? (
+              <button onClick={() => setShowCreate(s => !s)}
+                className="w-full py-2 bg-rose-500 text-white text-[11px] font-bold rounded-xl hover:bg-rose-600 transition-colors shadow-sm">
+                + Create New Event
+              </button>
+            ) : (
+              <p className="text-[10px] text-gray-400 text-center">Faculty & Admin can create and manage events</p>
+            )}
           </div>
         </div>
 

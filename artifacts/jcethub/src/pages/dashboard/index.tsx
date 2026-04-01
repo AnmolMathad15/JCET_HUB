@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import {
   GraduationCap, BookOpen, Clock, Calendar, ChevronRight, Award,
   Bus, Wallet, MessageSquare, FileText, Users, CalendarDays, FlaskConical, LayoutDashboard,
+  PartyPopper, Zap, Trophy, Briefcase,
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -38,6 +39,45 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+        {/* ⭐ Events Hub — Featured First */}
+        <Link href="/dashboard/events-hub">
+          <div className="bg-gradient-to-br from-[#1a237e] via-[#283593] to-[#3949ab] rounded-2xl p-5 text-white relative overflow-hidden cursor-pointer hover:shadow-xl transition-all hover:-translate-y-0.5 group">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-0 right-0 w-60 h-60 bg-white/5 rounded-full -translate-y-32 translate-x-32" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#E8821A]/10 rounded-full translate-y-24 -translate-x-24" />
+              <div className="absolute top-1/2 right-10 text-7xl opacity-5 select-none group-hover:opacity-10 transition-opacity">🎪</div>
+            </div>
+            <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-[#E8821A] rounded-2xl flex items-center justify-center text-3xl shadow-lg shrink-0">🎪</div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h2 className="text-lg font-extrabold tracking-tight">Campus Events & Extracurricular Hub</h2>
+                    <span className="text-[10px] bg-[#E8821A] text-white font-bold px-2 py-0.5 rounded-full">NEW</span>
+                  </div>
+                  <p className="text-blue-200 text-xs">Centralized platform for events, achievements & career growth</p>
+                  <div className="flex flex-wrap gap-3 mt-2">
+                    {[
+                      { icon: <PartyPopper className="w-3 h-3" />, text: "Discover Events" },
+                      { icon: <Zap className="w-3 h-3 text-yellow-300" />, text: "Earn XP" },
+                      { icon: <Trophy className="w-3 h-3 text-amber-300" />, text: "Leaderboard" },
+                      { icon: <Briefcase className="w-3 h-3 text-purple-300" />, text: "Resume Builder" },
+                    ].map(f => (
+                      <span key={f.text} className="flex items-center gap-1 text-[10px] text-blue-100 font-medium bg-white/10 px-2 py-0.5 rounded-full">
+                        {f.icon} {f.text}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 px-4 py-2.5 rounded-xl transition-colors self-start sm:self-auto shrink-0">
+                <span className="text-sm font-bold">Open Events Hub</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </div>
+        </Link>
 
         {/* Welcome banner */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-card p-5 rounded-xl border shadow-sm">
