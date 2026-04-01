@@ -3,7 +3,6 @@ import app from "./app";
 import { initSocket } from "./socket";
 import { logger } from "./lib/logger";
 import { db } from "@workspace/db";
-import { usersTable } from "@workspace/db/schema";
 import { sql } from "drizzle-orm";
 
 const rawPort = process.env["PORT"];
@@ -261,15 +260,100 @@ async function seedDemoData() {
       ON CONFLICT (id) DO NOTHING
     `);
 
+    // Events — 10 JCET campus events (always seeded so events-hub never falls back)
+    await db.execute(sql`
+      INSERT INTO events (id, title, description, date, type, venue, capacity, organizer_name, xp_reward, status, registration_open, tags, domain, registration_fee, requires_payment, is_team_event, max_team_size)
+      VALUES
+        ('evt-001','HackJCET 2026 — 24-Hour Hackathon','Build, innovate and win at JCET''s annual 24-hour hackathon. Open to all students across all branches.','2026-04-10','hackathon','CS Block Auditorium',100,'CSE Department',200,'upcoming',true,'coding,hackathon,innovation','technical',0,false,true,4),
+        ('evt-002','Utsav 2026 — JCET Cultural Fest','Celebrate creativity at JCET''s biggest cultural event — music, dance, drama and art.','2026-04-15','cultural','Open Amphitheater',500,'Student Council',100,'upcoming',true,'cultural,music,dance','cultural',0,false,false,null),
+        ('evt-003','AWS Cloud Computing Workshop','Hands-on cloud workshop with AWS architecture, serverless and certification guidance.','2026-04-17','workshop','Computer Lab 3',60,'Training & Placement',150,'upcoming',true,'cloud,aws,workshop','technical',0,false,false,null),
+        ('evt-004','JCET Sports Day 2026','Annual inter-department sports championship. Athletics, cricket, football and more.','2026-04-22','sports','Sports Ground',200,'Physical Education Dept',75,'upcoming',true,'sports,athletics','sports',0,false,false,null),
+        ('evt-005','AI/ML Industry Expert Talk','Industry experts share insights on Machine Learning and AI career paths.','2026-04-19','academic','Seminar Hall A',150,'AIML Department',60,'upcoming',true,'ai,ml,industry','technical',0,false,false,null),
+        ('evt-006','Code Battle — Competitive Programming','Solve algorithmic challenges in a timed competitive programming contest.','2026-04-25','hackathon','CS Block Lab',80,'IEEE Student Branch',120,'upcoming',true,'coding,competitive','technical',0,false,false,null),
+        ('evt-007','Web Dev Bootcamp — React & Node.js','Intensive 2-day bootcamp on modern full-stack web development.','2026-05-02','workshop','IT Lab',40,'IEEE Student Branch',180,'upcoming',true,'web,react,node','technical',0,false,false,null),
+        ('evt-008','Project Exhibition 2026 — JCET Innovate','Annual project expo showcasing student innovations across all departments.','2026-05-10','academic','Main Block Hall',300,'Dean Academics',100,'upcoming',true,'projects,exhibition','academic',0,false,true,3),
+        ('evt-009','Open Mic Night — JCET Unplugged','Express yourself! Poetry, comedy, music and more. Open stage for all students.','2026-03-28','cultural','Amphitheater',200,'Student Council',50,'completed',false,'music,openmic,cultural','cultural',0,false,false,null),
+        ('evt-010','Cybersecurity CTF Challenge','Capture The Flag — hands-on cybersecurity challenge for all skill levels.','2026-05-05','hackathon','CS Block Lab',60,'CSE Department',150,'upcoming',true,'security,ctf,hacking','technical',0,false,true,2)
+      ON CONFLICT (id) DO NOTHING
+    `);
+
+    // Timetable — CSE Sem 5 full weekly schedule
+    await db.execute(sql`
+      INSERT INTO timetable (id, branch, semester, day, period, start_time, end_time, subject, subject_code, faculty, room)
+      VALUES
+        ('tt-mon-1','CSE','5','Monday',   1,'09:00','10:00','Data Structures',             'CS501','Dr. Priya Sharma','CSE Lab 1'),
+        ('tt-mon-2','CSE','5','Monday',   2,'10:00','11:00','Operating Systems',            'CS502','Dr. Priya Sharma','Room 201'),
+        ('tt-mon-3','CSE','5','Monday',   3,'11:00','12:00','Computer Networks',            'CS503','Dr. Priya Sharma','Room 202'),
+        ('tt-mon-4','CSE','5','Monday',   4,'14:00','15:00','Database Management Systems',  'CS504','Dr. Priya Sharma','Room 203'),
+        ('tt-tue-1','CSE','5','Tuesday',  1,'09:00','10:00','Software Engineering',         'CS505','Dr. Priya Sharma','Room 201'),
+        ('tt-tue-2','CSE','5','Tuesday',  2,'10:00','11:00','Data Structures',              'CS501','Dr. Priya Sharma','CSE Lab 1'),
+        ('tt-tue-3','CSE','5','Tuesday',  3,'14:00','15:00','Operating Systems',            'CS502','Dr. Priya Sharma','Room 204'),
+        ('tt-wed-1','CSE','5','Wednesday',1,'09:00','10:00','Computer Networks',            'CS503','Dr. Priya Sharma','Room 202'),
+        ('tt-wed-2','CSE','5','Wednesday',2,'10:00','11:00','Database Management Systems',  'CS504','Dr. Priya Sharma','Room 203'),
+        ('tt-wed-3','CSE','5','Wednesday',3,'11:00','12:00','Software Engineering',         'CS505','Dr. Priya Sharma','Room 201'),
+        ('tt-thu-1','CSE','5','Thursday', 1,'09:00','10:00','Data Structures',              'CS501','Dr. Priya Sharma','CSE Lab 2'),
+        ('tt-thu-2','CSE','5','Thursday', 2,'10:00','11:00','Computer Networks',            'CS503','Dr. Priya Sharma','Room 202'),
+        ('tt-thu-3','CSE','5','Thursday', 3,'14:00','15:00','Database Management Systems',  'CS504','Dr. Priya Sharma','Room 203'),
+        ('tt-fri-1','CSE','5','Friday',   1,'09:00','10:00','Operating Systems',            'CS502','Dr. Priya Sharma','Room 204'),
+        ('tt-fri-2','CSE','5','Friday',   2,'10:00','11:00','Software Engineering',         'CS505','Dr. Priya Sharma','Room 201'),
+        ('tt-fri-3','CSE','5','Friday',   3,'11:00','12:00','Data Structures',              'CS501','Dr. Priya Sharma','CSE Lab 1'),
+        ('tt-sat-1','CSE','5','Saturday', 1,'09:00','10:00','Computer Networks',            'CS503','Dr. Priya Sharma','Room 202'),
+        ('tt-sat-2','CSE','5','Saturday', 2,'10:00','11:00','Database Management Systems',  'CS504','Dr. Priya Sharma','Room 203'),
+        ('tt-ece-1','ECE','5','Monday',   1,'09:00','10:00','Signals & Systems',            'EC501','Dr. Meena Iyer','ECE Lab'),
+        ('tt-ece-2','ECE','5','Tuesday',  1,'09:00','10:00','Digital Electronics',          'EC502','Dr. Meena Iyer','Room 301')
+      ON CONFLICT (id) DO NOTHING
+    `);
+
+    // Attendance — student-001 across 5 subjects (status: safe/warning/danger based on %)
+    await db.execute(sql`
+      INSERT INTO attendance (id, user_id, subject, subject_code, attended, total, percentage, status)
+      VALUES
+        ('att-001-ds',  'student-001','Data Structures',            'CS501',38,50,76.0,'safe'),
+        ('att-001-os',  'student-001','Operating Systems',           'CS502',41,52,78.8,'safe'),
+        ('att-001-cn',  'student-001','Computer Networks',           'CS503',33,46,71.7,'warning'),
+        ('att-001-dbms','student-001','Database Management Systems', 'CS504',44,55,80.0,'safe'),
+        ('att-001-se',  'student-001','Software Engineering',        'CS505',30,42,71.4,'warning'),
+        ('att-002-ds',  'student-002','Data Structures',             'CS501',45,50,90.0,'safe')
+      ON CONFLICT (id) DO NOTHING
+    `);
+
+    // Internal Assessment marks — VTU 2022 scheme (IA1=25, IA2=25, IA3=25, max_marks=100)
+    await db.execute(sql`
+      INSERT INTO marks (id, user_id, subject, subject_code, ia1, ia2, ia3, final_marks, max_marks, grade)
+      VALUES
+        ('marks-001-ds',  'student-001','Data Structures',            'CS501',19,21,20,60.0,100,'B'),
+        ('marks-001-os',  'student-001','Operating Systems',           'CS502',20,22,21,63.0,100,'B'),
+        ('marks-001-cn',  'student-001','Computer Networks',           'CS503',17,19,18,54.0,100,'C'),
+        ('marks-001-dbms','student-001','Database Management Systems', 'CS504',22,23,22,67.0,100,'B'),
+        ('marks-001-se',  'student-001','Software Engineering',        'CS505',18,20,19,57.0,100,'C'),
+        ('marks-002-ds',  'student-002','Data Structures',             'CS501',23,24,23,70.0,100,'A')
+      ON CONFLICT (id) DO NOTHING
+    `);
+
+    // Assignments — 3 active assignments for batch-cse-a1 from Dr. Priya Sharma
+    await db.execute(sql`
+      INSERT INTO assignments (id, title, description, subject_id, subject_name, batch_id, batch_name, faculty_id, faculty_name, due_date, max_marks)
+      VALUES
+        ('asgn-001','Assignment 1 — Sorting Algorithms',         'Implement and compare 5 sorting algorithms (Bubble, Merge, Quick, Heap, Radix) with time and space complexity analysis. Submit a PDF report with code.','sub-ds',  'Data Structures',            'batch-cse-a1','A1','faculty-001','Dr. Priya Sharma','2026-04-15 23:59:00',10),
+        ('asgn-002','Assignment 2 — Process Scheduling',         'Simulate FCFS, SJF and Round Robin scheduling algorithms. Draw Gantt charts and calculate average waiting and turnaround time for 5 processes.', 'sub-os',  'Operating Systems',           'batch-cse-a1','A1','faculty-001','Dr. Priya Sharma','2026-04-18 23:59:00',10),
+        ('asgn-003','Assignment 3 — ER Diagram & Normalization', 'Design an ER diagram for a College Library Management System. Normalize to 3NF. Convert ER to relational schema and write 5 SQL queries.',        'sub-dbms','Database Management Systems', 'batch-cse-a1','A1','faculty-001','Dr. Priya Sharma','2026-04-20 23:59:00',10)
+      ON CONFLICT (id) DO NOTHING
+    `);
+
     const counts = await db.execute(sql`
       SELECT
-        (SELECT COUNT(*) FROM users    WHERE role = 'student') AS students,
-        (SELECT COUNT(*) FROM users    WHERE role = 'faculty') AS faculty,
-        (SELECT COUNT(*) FROM departments)                     AS departments,
-        (SELECT COUNT(*) FROM batches)                         AS batches,
-        (SELECT COUNT(*) FROM subjects)                        AS subjects,
-        (SELECT COUNT(*) FROM campus_points)                   AS xp_entries,
-        (SELECT COUNT(*) FROM student_badges)                  AS badges_awarded
+        (SELECT COUNT(*) FROM users        WHERE role = 'student') AS students,
+        (SELECT COUNT(*) FROM users        WHERE role = 'faculty') AS faculty,
+        (SELECT COUNT(*) FROM departments)                         AS departments,
+        (SELECT COUNT(*) FROM batches)                             AS batches,
+        (SELECT COUNT(*) FROM subjects)                            AS subjects,
+        (SELECT COUNT(*) FROM events)                              AS events,
+        (SELECT COUNT(*) FROM timetable)                           AS timetable,
+        (SELECT COUNT(*) FROM attendance)                          AS attendance,
+        (SELECT COUNT(*) FROM marks)                               AS marks,
+        (SELECT COUNT(*) FROM assignments)                         AS assignments,
+        (SELECT COUNT(*) FROM campus_points)                       AS xp_entries,
+        (SELECT COUNT(*) FROM student_badges)                      AS badges_awarded
     `);
     logger.info({ counts: counts.rows[0] }, "Demo data seed completed");
   } catch (err) {
