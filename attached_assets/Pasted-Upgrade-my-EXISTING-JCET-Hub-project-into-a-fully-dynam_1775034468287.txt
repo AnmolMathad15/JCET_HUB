@@ -1,0 +1,181 @@
+Upgrade my EXISTING JCET Hub project into a fully dynamic, real-time system using ONLY Replit (Node.js + Express + JSON database).
+
+STRICT RULES:
+
+* DO NOT change UI, design, layout, or styling
+* DO NOT rebuild the app
+* ONLY replace dummy/static values with real backend-driven data
+* Fix NaN and hardcoded values everywhere
+
+---
+
+GOAL:
+
+Convert my current static dashboard into a REAL working system with:
+
+1. Campus Points (XP system)
+2. QR Attendance (functional)
+3. Activity Resume (auto-generated from data)
+4. Organizer Dashboard (real stats)
+5. Admin + Faculty CRUD system
+
+Everything must be dynamic and connected to backend.
+
+---
+
+BACKEND SETUP:
+
+Create a Node.js Express server inside the same project.
+
+Create a file: db.json with structure:
+
+{
+"users": [
+{
+"id": "user1",
+"name": "Student",
+"xp": 0,
+"eventsAttended": 0,
+"eventsRegistered": 0
+}
+],
+"events": [],
+"attendance": []
+}
+
+---
+
+API ENDPOINTS:
+
+1. GET /user/:id → return user data
+
+2. GET /events → return all events
+
+3. POST /events → create new event (ADMIN)
+
+4. PUT /events/:id → update event (ADMIN)
+
+5. DELETE /events/:id → delete event (ADMIN)
+
+6. POST /attend/:eventId → mark attendance:
+
+   * add record in attendance
+   * increase user.xp by event.points
+   * increase eventsAttended
+
+7. GET /stats → return:
+
+   * total registrations
+   * total events
+   * avg engagement = attendance / events
+
+---
+
+FRONTEND INTEGRATION:
+
+Modify existing UI files ONLY.
+
+Replace all static values with fetch() calls:
+
+* Campus Points card:
+  fetch /user/user1
+  update xp, attended, registered
+
+* Organizer card:
+  fetch /stats
+  fix NaN → always default to 0
+
+* Events:
+  fetch /events
+
+---
+
+CAMPUS POINTS LOGIC:
+
+* level = Math.floor(xp / 100) + 1
+* remainingXP = 100 - (xp % 100)
+
+Update UI dynamically without changing layout.
+
+---
+
+QR ATTENDANCE:
+
+* Connect existing QR/button
+
+* On click:
+  POST /attend/:eventId
+
+* After success:
+  reload user data
+
+---
+
+ACTIVITY RESUME:
+
+* Fetch attendance + events
+
+* Generate skills dynamically:
+
+  hackathon → problem solving
+  workshop → tech skills
+  club → teamwork
+  organizer → leadership
+
+* Update existing UI badges dynamically
+
+---
+
+ADMIN / FACULTY PANEL:
+
+Add simple UI (can be basic form):
+
+* Create event
+* Edit event
+* Delete event
+
+Use:
+POST /events
+PUT /events/:id
+DELETE /events/:id
+
+---
+
+IMPORTANT FIXES:
+
+* Replace ALL NaN with 0
+* Use fallback:
+  value || 0
+
+---
+
+REAL-TIME FEEL:
+
+* After any action (attendance / CRUD)
+  automatically refresh UI using fetch()
+
+---
+
+OUTPUT REQUIRED:
+
+* Fully integrated backend (server.js)
+* db.json file
+* Updated frontend code (only modified parts)
+* Clear comments explaining changes
+
+---
+
+FINAL RESULT:
+
+My CURRENT UI should remain EXACTLY SAME
+
+but now:
+
+* XP increases dynamically
+* Attendance works
+* Resume generates from real data
+* Organizer stats are real
+* Admin can manage events
+* No dummy or hardcoded data anywhere
+
+---

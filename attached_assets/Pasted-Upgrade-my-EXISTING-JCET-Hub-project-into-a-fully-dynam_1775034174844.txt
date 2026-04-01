@@ -1,0 +1,146 @@
+Upgrade my EXISTING JCET Hub project into a fully dynamic application using Firebase (Firestore).
+
+STRICT RULE:
+
+* DO NOT change UI, layout, colors, or structure
+* ONLY replace dummy/static values with real dynamic data
+* Preserve all existing components and design exactly as it is
+
+---
+
+GOAL:
+Convert current static dashboard into a real-time working system:
+
+* Campus Points → dynamic
+* QR Attendance → functional
+* Activity Resume → auto-generated
+* Organizer stats → real values
+* Remove all NaN and dummy values
+
+---
+
+1. FIREBASE INTEGRATION
+
+* Add Firebase config file
+* Initialize Firestore
+* Use collections:
+
+users/
+events/
+attendance/
+
+* Connect existing UI to Firebase data
+
+---
+
+2. FIX EXISTING UI VALUES (IMPORTANT)
+
+Replace:
+
+* "0 XP" → real user xp from Firestore
+* "0 attended" → actual attendance count
+* "NaN" → always show 0 if no data
+* "9 active events" → fetch from events collection
+
+---
+
+3. CAMPUS POINTS (UPGRADE EXISTING CARD)
+
+* Fetch user data dynamically
+
+* Calculate:
+  level = Math.floor(xp / 100) + 1
+  remainingXP = 100 - (xp % 100)
+
+* Update UI without changing design
+
+---
+
+4. QR ATTENDANCE (UPGRADE BUTTON)
+
+* When QR or button is used:
+
+  * Add record in attendance collection
+  * Update user xp using increment()
+  * Increase eventsAttended
+
+* Connect to existing QR section UI
+
+---
+
+5. ACTIVITY RESUME (MAKE IT REAL)
+
+* Fetch user attendance
+
+* Map event types to skills:
+  hackathon → problem solving
+  workshop → tech skills
+  club → teamwork
+  organizer → leadership
+
+* Update existing badges dynamically
+
+* Make "Generate Resume" button functional
+
+---
+
+6. ORGANIZER SECTION FIX
+
+* total registrations = attendance count
+
+* active events = events collection count
+
+* avg engagement = attendance / events
+
+* If no data:
+  show 0 (NOT NaN)
+
+---
+
+7. REAL-TIME UPDATES (IMPORTANT)
+
+* Use onSnapshot() for:
+
+  * user data
+  * events
+  * attendance
+
+* UI must auto-update when data changes
+
+---
+
+8. ERROR HANDLING
+
+* Prevent undefined values
+* Always use fallback:
+  value || 0
+
+---
+
+9. CODE INTEGRATION RULES
+
+* Modify existing files ONLY
+* Do NOT rewrite full project
+* Inject Firebase logic into current components
+
+---
+
+10. OUTPUT
+
+* Updated code integrated into existing project
+* Firebase config placeholder
+* Comments explaining where changes were made
+
+---
+
+FINAL RESULT:
+
+My CURRENT UI should stay EXACTLY SAME
+but now:
+
+* XP increases in real-time
+* Attendance works
+* Resume builds dynamically
+* No dummy data anywhere
+
+---
