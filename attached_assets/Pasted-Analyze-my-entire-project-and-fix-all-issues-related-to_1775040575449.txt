@@ -1,0 +1,53 @@
+Analyze my entire project and fix all issues related to event registration not showing on the frontend.
+
+Do a full audit and ensure the following:
+
+1. Frontend Fixes:
+
+* Ensure index.html correctly loads all CSS and JS files using proper paths (use /style.css and /script.js instead of relative paths).
+* Check if any sections like event registration are hidden using CSS (display: none) and make them visible.
+* Ensure DOMContentLoaded or proper script execution is used so JS runs after page load.
+
+2. JavaScript Fixes:
+
+* Check if script.js is properly linked and executing.
+* Fix all broken event listeners (like register button click).
+* Add console logs to debug interactions.
+* If event data is fetched from API and failing, replace it temporarily with static dummy data so UI always shows events.
+
+3. Backend/API Fixes:
+
+* Check if API routes (like /api/events or /routes/events.ts) are working.
+* If API is failing or not reachable, create a fallback system using static data.
+* Ensure server is running properly in Replit.
+
+4. Event Registration Feature:
+
+* Ensure event cards are rendered dynamically or statically.
+* Ensure register button is visible and clickable.
+* If registration uses forms, ensure form submission works or mock it.
+
+5. Error Handling:
+
+* Fix all console errors.
+* Handle failed fetch requests gracefully.
+* Ensure no blank UI appears even if backend fails.
+
+6. Deployment Readiness:
+
+* Ensure the project runs perfectly on Replit preview link.
+* Make sure the app returns HTTP 200 and loads without errors.
+* Avoid any dependency on broken backend APIs for now.
+
+7. Output:
+
+* Modify code directly and fix all issues.
+* Highlight what was broken and what was fixed.
+* Ensure event registration section is visible and working 100%.
+
+IMPORTANT:
+Do NOT remove features. Only fix and stabilize them.
+If backend is unstable, prioritize frontend visibility using static fallback data.
+
+Goal:
+Make the project fully working for demo/submission with visible event registration and no runtime errors.
