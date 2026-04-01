@@ -261,19 +261,33 @@ async function seedDemoData() {
     `);
 
     // Events — 10 JCET campus events (always seeded so events-hub never falls back)
+    // Uses DO UPDATE to keep payment fields current even if event already exists
     await db.execute(sql`
       INSERT INTO events (id, title, description, date, type, venue, capacity, organizer_name, xp_reward, status, registration_open, tags, domain, registration_fee, requires_payment, is_team_event, max_team_size)
       VALUES
-        ('evt-001','HackJCET 2026 — 24-Hour Hackathon','Build, innovate and win at JCET''s annual 24-hour hackathon. Open to all students across all branches.','2026-04-10','hackathon','CS Block Auditorium',100,'CSE Department',200,'upcoming',true,'coding,hackathon,innovation','technical',0,false,true,4),
+        ('evt-001','HackJCET 2026 — 24-Hour Hackathon','Build, innovate and win at JCET''s annual 24-hour hackathon. Open to all students across all branches.','2026-04-10','hackathon','CS Block Auditorium',100,'CSE Department',200,'upcoming',true,'coding,hackathon,innovation','technical',100,true,true,4),
         ('evt-002','Utsav 2026 — JCET Cultural Fest','Celebrate creativity at JCET''s biggest cultural event — music, dance, drama and art.','2026-04-15','cultural','Open Amphitheater',500,'Student Council',100,'upcoming',true,'cultural,music,dance','cultural',0,false,false,null),
-        ('evt-003','AWS Cloud Computing Workshop','Hands-on cloud workshop with AWS architecture, serverless and certification guidance.','2026-04-17','workshop','Computer Lab 3',60,'Training & Placement',150,'upcoming',true,'cloud,aws,workshop','technical',0,false,false,null),
+        ('evt-003','AWS Cloud Computing Workshop','Hands-on cloud workshop with AWS architecture, serverless and certification guidance.','2026-04-17','workshop','Computer Lab 3',60,'Training & Placement',150,'upcoming',true,'cloud,aws,workshop','technical',150,true,false,null),
         ('evt-004','JCET Sports Day 2026','Annual inter-department sports championship. Athletics, cricket, football and more.','2026-04-22','sports','Sports Ground',200,'Physical Education Dept',75,'upcoming',true,'sports,athletics','sports',0,false,false,null),
         ('evt-005','AI/ML Industry Expert Talk','Industry experts share insights on Machine Learning and AI career paths.','2026-04-19','academic','Seminar Hall A',150,'AIML Department',60,'upcoming',true,'ai,ml,industry','technical',0,false,false,null),
         ('evt-006','Code Battle — Competitive Programming','Solve algorithmic challenges in a timed competitive programming contest.','2026-04-25','hackathon','CS Block Lab',80,'IEEE Student Branch',120,'upcoming',true,'coding,competitive','technical',0,false,false,null),
-        ('evt-007','Web Dev Bootcamp — React & Node.js','Intensive 2-day bootcamp on modern full-stack web development.','2026-05-02','workshop','IT Lab',40,'IEEE Student Branch',180,'upcoming',true,'web,react,node','technical',0,false,false,null),
+        ('evt-007','Web Dev Bootcamp — React & Node.js','Intensive 2-day bootcamp on modern full-stack web development.','2026-05-02','workshop','IT Lab',40,'IEEE Student Branch',180,'upcoming',true,'web,react,node','technical',200,true,false,null),
         ('evt-008','Project Exhibition 2026 — JCET Innovate','Annual project expo showcasing student innovations across all departments.','2026-05-10','academic','Main Block Hall',300,'Dean Academics',100,'upcoming',true,'projects,exhibition','academic',0,false,true,3),
         ('evt-009','Open Mic Night — JCET Unplugged','Express yourself! Poetry, comedy, music and more. Open stage for all students.','2026-03-28','cultural','Amphitheater',200,'Student Council',50,'completed',false,'music,openmic,cultural','cultural',0,false,false,null),
         ('evt-010','Cybersecurity CTF Challenge','Capture The Flag — hands-on cybersecurity challenge for all skill levels.','2026-05-05','hackathon','CS Block Lab',60,'CSE Department',150,'upcoming',true,'security,ctf,hacking','technical',0,false,true,2)
+      ON CONFLICT (id) DO UPDATE SET
+        requires_payment = EXCLUDED.requires_payment,
+        registration_fee = EXCLUDED.registration_fee
+    `);
+
+    // Event registrations — seed for demo student-001 (Aryan Joshi / 2JH23CS001)
+    // Shows 3 registrations (2 attended) so dashboard stats are non-zero
+    await db.execute(sql`
+      INSERT INTO event_registrations (id, event_id, student_id, student_name, student_usn, attended, attended_at, qr_token, status, email, phone, branch, semester, year_of_study)
+      VALUES
+        ('ereg-001-002','evt-002','student-001','Aryan Joshi','2JH23CS001',false,null,'QR-ARYAN-EVT002','registered','aryan.joshi@jcet.edu','9876543210','CSE','5','3rd Year'),
+        ('ereg-001-005','evt-005','student-001','Aryan Joshi','2JH23CS001',true,'2026-04-19 14:30:00','QR-ARYAN-EVT005','attended','aryan.joshi@jcet.edu','9876543210','CSE','5','3rd Year'),
+        ('ereg-001-009','evt-009','student-001','Aryan Joshi','2JH23CS001',true,'2026-03-28 19:00:00','QR-ARYAN-EVT009','attended','aryan.joshi@jcet.edu','9876543210','CSE','5','3rd Year')
       ON CONFLICT (id) DO NOTHING
     `);
 
