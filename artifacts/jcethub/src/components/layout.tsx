@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
+import { useQueryClient } from "@tanstack/react-query";
 import { isAuthenticated, getUser, clearAuthToken, clearUser } from "@/lib/auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -89,6 +90,7 @@ const BASE_NAV_GROUPS = [
 export function Layout({ children }: LayoutProps) {
   const [, setLocation] = useLocation();
   const [user, setUserData] = useState<any>(null);
+  const qc = useQueryClient();
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -108,6 +110,7 @@ export function Layout({ children }: LayoutProps) {
     }
     clearAuthToken();
     clearUser();
+    qc.clear();
     setLocation("/");
   };
 
