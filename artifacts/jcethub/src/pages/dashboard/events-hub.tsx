@@ -1074,12 +1074,69 @@ export default function EventsHub() {
                         )}
 
                         {/* Payment Details */}
-                        {selectedEvent.requiresPayment && (
+                        {selectedEvent.requiresPayment && (() => {
+                          const upiId = "jcethub@paytm";
+                          const upiLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("JCET Hub")}&am=${selectedEvent.registrationFee}&tn=${encodeURIComponent("Event Registration: " + selectedEvent.title)}`;
+                          return (
                           <div>
                             <h4 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2 pb-2 border-b border-gray-100">
                               <CreditCard className="w-4 h-4 text-[#1a237e]" /> Payment Details
                               <span className="text-xs text-orange-600 font-semibold bg-orange-50 px-2 py-0.5 rounded border border-orange-200">₹{selectedEvent.registrationFee} Required</span>
                             </h4>
+
+                            {/* UPI QR + Info Panel */}
+                            <div className="bg-gradient-to-br from-[#1a237e]/5 to-[#E8821A]/5 border border-[#1a237e]/15 rounded-2xl p-4 mb-4">
+                              <div className="flex flex-col sm:flex-row gap-4 items-center">
+                                {/* QR Code */}
+                                <div className="shrink-0 flex flex-col items-center">
+                                  <div className="bg-white p-3 rounded-xl shadow border border-gray-100">
+                                    <QRCodeCanvas
+                                      value={upiLink}
+                                      size={110}
+                                      bgColor="#ffffff"
+                                      fgColor="#1a237e"
+                                      level="M"
+                                    />
+                                  </div>
+                                  <p className="text-[10px] text-gray-400 mt-1.5 text-center">Scan to pay via any UPI app</p>
+                                </div>
+
+                                {/* UPI Details */}
+                                <div className="flex-1 space-y-3">
+                                  <div>
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold mb-1">Pay to UPI ID</p>
+                                    <div className="flex items-center gap-2 bg-white border border-[#1a237e]/20 rounded-lg px-3 py-2">
+                                      <span className="text-sm font-bold text-[#1a237e] flex-1">{upiId}</span>
+                                      <button
+                                        type="button"
+                                        onClick={() => { navigator.clipboard.writeText(upiId); }}
+                                        className="text-[10px] text-[#E8821A] font-bold hover:underline shrink-0"
+                                      >Copy</button>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2 text-center">
+                                    <div className="bg-white rounded-lg px-2 py-1.5 border border-gray-100">
+                                      <p className="text-[9px] text-gray-400">Amount</p>
+                                      <p className="text-sm font-extrabold text-[#1a237e]">₹{selectedEvent.registrationFee}</p>
+                                    </div>
+                                    <div className="bg-white rounded-lg px-2 py-1.5 border border-gray-100">
+                                      <p className="text-[9px] text-gray-400">Accepted Apps</p>
+                                      <p className="text-[10px] font-bold text-gray-600">GPay · PhonePe · Paytm</p>
+                                    </div>
+                                  </div>
+                                  <div className="space-y-1">
+                                    {["Open GPay / PhonePe / Paytm", "Scan QR or enter UPI ID", "Pay ₹" + selectedEvent.registrationFee + " & copy the transaction ID"].map((step, i) => (
+                                      <div key={i} className="flex items-center gap-2 text-[11px] text-gray-600">
+                                        <span className="w-4 h-4 rounded-full bg-[#1a237e] text-white text-[9px] flex items-center justify-center shrink-0 font-bold">{i + 1}</span>
+                                        {step}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Confirm Payment Details */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <div>
                                 <label className="text-xs text-gray-500 mb-1 block">Payment Mode *</label>
@@ -1088,16 +1145,17 @@ export default function EventsHub() {
                                 </select>
                               </div>
                               <div>
-                                <label className="text-xs text-gray-500 mb-1 block">Transaction / Reference ID</label>
-                                <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20" placeholder="UPI ref / transaction ID" value={regForm.transactionId} onChange={e => setRegForm(f => ({ ...f, transactionId: e.target.value }))} />
+                                <label className="text-xs text-gray-500 mb-1 block">Transaction / Reference ID *</label>
+                                <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20" placeholder="e.g. UPI-123456789012" value={regForm.transactionId} onChange={e => setRegForm(f => ({ ...f, transactionId: e.target.value }))} />
                               </div>
                               <div className="sm:col-span-2">
-                                <label className="text-xs text-gray-500 mb-1 block">Payment Screenshot URL (optional)</label>
+                                <label className="text-xs text-gray-500 mb-1 block">Payment Screenshot Link (optional)</label>
                                 <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20" placeholder="https://drive.google.com/..." value={regForm.paymentScreenshotUrl} onChange={e => setRegForm(f => ({ ...f, paymentScreenshotUrl: e.target.value }))} />
                               </div>
                             </div>
                           </div>
-                        )}
+                          );
+                        })()}
 
                         {regError && (
                           <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-3 rounded-xl">
