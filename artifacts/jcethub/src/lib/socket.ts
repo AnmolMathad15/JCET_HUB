@@ -9,8 +9,9 @@ export function connectSocket(): Socket {
   if (socket?.connected) return socket;
 
   socket = io(window.location.origin, {
-    path: `${BASE}/socket.io`,
+    path: `${BASE}/api/socket.io`,
     auth: { token: getAuthToken() },
+    transports: ["websocket", "polling"],
   });
 
   socket.on("connect", () => {

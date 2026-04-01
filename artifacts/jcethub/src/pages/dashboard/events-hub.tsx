@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import Layout from "@/components/layout";
 import { useApiGet, apiFetch } from "@/lib/api";
 import { getUser } from "@/lib/auth";
+import { connectSocket } from "@/lib/socket";
 import { useQueryClient } from "@tanstack/react-query";
 import { QRCodeCanvas } from "qrcode.react";
 import {
@@ -96,12 +97,57 @@ function CapacityBar({ count, capacity }: { count: number; capacity: number | nu
   );
 }
 
+const SKILL_MAP: Record<string, string[]> = {
+  technical:  ["Problem Solving", "Programming", "Technical Analysis"],
+  hackathon:  ["Rapid Prototyping", "Innovation", "Teamwork"],
+  cultural:   ["Communication", "Creativity", "Leadership"],
+  sports:     ["Team Collaboration", "Discipline", "Physical Fitness"],
+  workshop:   ["Continuous Learning", "Domain Knowledge"],
+  academic:   ["Research", "Critical Thinking", "Academic Writing"],
+  other:      ["Adaptability", "Initiative"],
+};
+
+function getLevel(xp: number) {
+  if (xp >= 1000) return { name: "Elite",    icon: "💎", current: 1000, next: null,  nextName: null };
+  if (xp >= 500)  return { name: "Pro",      icon: "🏆", current: 500,  next: 1000,  nextName: "Elite" };
+  if (xp >= 200)  return { name: "Rising",   icon: "⭐", current: 200,  next: 500,   nextName: "Pro" };
+  if (xp >= 50)   return { name: "Active",   icon: "🔥", current: 50,   next: 200,   nextName: "Rising" };
+  return                 { name: "Beginner", icon: "🌱", current: 0,    next: 50,    nextName: "Active" };
+}
+
 export default function EventsHub() {
   const user = getUser();
   const qc = useQueryClient();
   const canManage = user?.role === "faculty" || user?.role === "admin";
 
   const { data: events = [], isLoading } = useApiGet<EventItem[]>("/events-hub");
+
+  const [countOverrides, setCountOverrides] = useState<Record<string, number>>({});
+  const [socketConnected, setSocketConnected] = useState(false);
+
+  useEffect(() => {
+    const sock = connectSocket();
+    const onConnect = () => setSocketConnected(true);
+    const onDisconnect = () => setSocketConnected(false);
+    const onRegUpdate = (data: { eventId: string; count: number }) => {
+      setCountOverrides(prev => ({ ...prev, [data.eventId]: data.count }));
+      qc.invalidateQueries({ queryKey: ["/events-hub"] });
+    };
+    const onAttendUpdate = () => {
+      qc.invalidateQueries({ queryKey: ["/events-hub"] });
+    };
+    sock.on("connect", onConnect);
+    sock.on("disconnect", onDisconnect);
+    sock.on("event:registration_update", onRegUpdate);
+    sock.on("event:attendance_update", onAttendUpdate);
+    if (sock.connected) setSocketConnected(true);
+    return () => {
+      sock.off("connect", onConnect);
+      sock.off("disconnect", onDisconnect);
+      sock.off("event:registration_update", onRegUpdate);
+      sock.off("event:attendance_update", onAttendUpdate);
+    };
+  }, []);
 
   const [activeTab, setActiveTab] = useState<"all" | "mine" | "recommended">("all");
   const [search, setSearch] = useState("");
@@ -131,6 +177,14 @@ export default function EventsHub() {
 
   const myEvents = events.filter(e => e.isRegistered);
   const attendedTypes = new Set(myEvents.map(e => e.type));
+
+  const dynamicSkills = useMemo(() => {
+    const skills = new Set<string>();
+    myEvents.filter(e => e.attended).forEach(e => {
+      (SKILL_MAP[e.type] ?? SKILL_MAP.other).forEach(s => skills.add(s));
+    });
+    return Array.from(skills).slice(0, 6);
+  }, [myEvents]);
 
   const recommended = useMemo(() => {
     const upcoming = events.filter(e =>
@@ -263,11 +317,17 @@ export default function EventsHub() {
             <div className="absolute top-1/2 right-20 text-8xl opacity-5 select-none">🎪</div>
           </div>
           <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-[#E8821A] rounded-2xl flex items-center justify-center text-2xl shadow-lg">🎪</div>
-              <div>
-                <h2 className="text-2xl font-extrabold tracking-tight">Campus Events Hub</h2>
-                <p className="text-blue-200 text-xs mt-0.5">Discover · Register · Earn XP · Build your portfolio</p>
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-[#E8821A] rounded-2xl flex items-center justify-center text-2xl shadow-lg">🎪</div>
+                <div>
+                  <h2 className="text-2xl font-extrabold tracking-tight">Campus Events Hub</h2>
+                  <p className="text-blue-200 text-xs mt-0.5">Discover · Register · Earn XP · Build your portfolio</p>
+                </div>
+              </div>
+              <div className={`flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border ${socketConnected ? "bg-green-400/20 border-green-400/40 text-green-300" : "bg-white/10 border-white/20 text-blue-200"}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${socketConnected ? "bg-green-400 animate-pulse" : "bg-gray-400"}`} />
+                {socketConnected ? "LIVE" : "Connecting..."}
               </div>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -330,35 +390,44 @@ export default function EventsHub() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
           {/* Gamification Panel */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
-                <Trophy className="w-5 h-5 text-amber-600" />
+          {(() => {
+            const lvl = getLevel(totalXP);
+            const progressPct = lvl.next
+              ? Math.min(100, ((totalXP - lvl.current) / (lvl.next - lvl.current)) * 100)
+              : 100;
+            const xpLeft = lvl.next ? lvl.next - totalXP : 0;
+            return (
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                    <Trophy className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <span className="text-[10px] bg-amber-200 text-amber-700 font-bold px-2 py-0.5 rounded-full">
+                    {lvl.icon} {lvl.name}
+                  </span>
+                </div>
+                <h4 className="font-bold text-gray-800 text-sm mb-0.5">Campus Points</h4>
+                <div className="text-2xl font-extrabold text-amber-600 mb-2">{totalXP} <span className="text-sm font-semibold text-amber-400">XP</span></div>
+                <div className="w-full bg-amber-100 rounded-full h-2 mb-1.5">
+                  <div className="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full transition-all duration-700" style={{ width: `${progressPct}%` }} />
+                </div>
+                <div className="flex justify-between text-[10px] text-amber-600 font-medium mb-2">
+                  <span>{lvl.next ? `→ ${lvl.nextName}` : "Max Level!"}</span>
+                  <span>{lvl.next ? `${xpLeft} XP left` : "🎉 Elite"}</span>
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex-1 bg-white rounded-lg px-2 py-1.5 text-center border border-amber-100">
+                    <div className="font-bold text-amber-700 text-sm">{myEvents.filter(e => e.attended).length}</div>
+                    <div className="text-[9px] text-gray-400">Attended</div>
+                  </div>
+                  <div className="flex-1 bg-white rounded-lg px-2 py-1.5 text-center border border-amber-100">
+                    <div className="font-bold text-amber-700 text-sm">{myEvents.length}</div>
+                    <div className="text-[9px] text-gray-400">Registered</div>
+                  </div>
+                </div>
               </div>
-              <span className="text-[10px] bg-amber-200 text-amber-700 font-bold px-2 py-0.5 rounded-full">
-                Level {Math.floor(totalXP / 100) + 1}
-              </span>
-            </div>
-            <h4 className="font-bold text-gray-800 text-sm mb-0.5">Campus Points</h4>
-            <div className="text-2xl font-extrabold text-amber-600 mb-2">{totalXP} <span className="text-sm font-semibold text-amber-400">XP</span></div>
-            <div className="w-full bg-amber-100 rounded-full h-2 mb-1.5">
-              <div className="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full transition-all" style={{ width: `${Math.min(100, (totalXP % 100))}%` }} />
-            </div>
-            <div className="flex justify-between text-[10px] text-amber-600 font-medium mb-2">
-              <span>Progress to next level</span>
-              <span>{100 - (totalXP % 100)} XP left</span>
-            </div>
-            <div className="flex gap-2">
-              <div className="flex-1 bg-white rounded-lg px-2 py-1.5 text-center border border-amber-100">
-                <div className="font-bold text-amber-700 text-sm">{myEvents.filter(e => e.attended).length}</div>
-                <div className="text-[9px] text-gray-400">Attended</div>
-              </div>
-              <div className="flex-1 bg-white rounded-lg px-2 py-1.5 text-center border border-amber-100">
-                <div className="font-bold text-amber-700 text-sm">{myEvents.length}</div>
-                <div className="text-[9px] text-gray-400">Registered</div>
-              </div>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* QR Attendance */}
           <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
@@ -386,9 +455,14 @@ export default function EventsHub() {
               <h4 className="font-bold text-gray-800 text-sm mb-1">My Activity Resume</h4>
               <p className="text-[11px] text-gray-500 mb-2">{myEvents.filter(e => e.attended).length} events attended · auto-generated</p>
               <div className="flex flex-wrap gap-1 mb-3 flex-1">
-                {["Problem Solving", "Teamwork", "Leadership", "Tech Skills"].map(s => (
-                  <span key={s} className="text-[9px] bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-semibold">{s}</span>
-                ))}
+                {dynamicSkills.length > 0
+                  ? dynamicSkills.map(s => (
+                      <span key={s} className="text-[9px] bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-semibold">{s}</span>
+                    ))
+                  : ["Attend events", "to earn skills"].map(s => (
+                      <span key={s} className="text-[9px] bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">{s}</span>
+                    ))
+                }
               </div>
               <div className="w-full py-2 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-[11px] font-bold rounded-xl text-center shadow-sm">
                 Generate Resume →
@@ -588,7 +662,8 @@ export default function EventsHub() {
             {filtered.map(ev => {
               const typeColor = TYPE_COLORS[ev.type] ?? TYPE_COLORS.other;
               const gradient = TYPE_GRADIENT[ev.type] ?? TYPE_GRADIENT.other;
-              const isFull = ev.capacity != null && ev.registrationCount >= ev.capacity;
+              const liveCount = countOverrides[ev.id] ?? ev.registrationCount;
+              const isFull = ev.capacity != null && liveCount >= ev.capacity;
               const isDeadlinePassed = ev.deadline && new Date(ev.deadline) < new Date();
               const canRegister = !ev.isRegistered && ev.registrationOpen && !isFull && !isDeadlinePassed && ev.status !== "completed";
               const countdown = ev.date ? daysUntil(ev.date) : null;
@@ -652,7 +727,16 @@ export default function EventsHub() {
                       )}
                     </div>
 
-                    <CapacityBar count={ev.registrationCount} capacity={ev.capacity} />
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] text-gray-400 flex items-center gap-1">
+                        <Users className="w-3 h-3" /> {liveCount} registered
+                        {countOverrides[ev.id] !== undefined && socketConnected && (
+                          <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse ml-0.5 inline-block" title="Live count" />
+                        )}
+                      </span>
+                      {ev.organizerName && <span className="text-[10px] text-gray-400 truncate max-w-[100px]">by {ev.organizerName}</span>}
+                    </div>
+                    <CapacityBar count={liveCount} capacity={ev.capacity} />
 
                     <div className="flex items-center gap-2 mt-2.5">
                       {ev.attended ? (

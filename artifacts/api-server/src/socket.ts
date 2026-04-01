@@ -7,7 +7,7 @@ let io: SocketIOServer | null = null;
 export function initSocket(httpServer: HttpServer) {
   io = new SocketIOServer(httpServer, {
     cors: { origin: "*", methods: ["GET", "POST"] },
-    path: "/socket.io",
+    path: "/api/socket.io",
   });
 
   io.on("connection", (socket) => {
@@ -36,4 +36,12 @@ export function emitToUser(userId: string, event: string, data: unknown) {
 
 export function broadcastNotification(notification: unknown) {
   io?.emit("notification", notification);
+}
+
+export function broadcastEventRegistration(eventId: string, count: number, delta: number) {
+  io?.emit("event:registration_update", { eventId, count, delta });
+}
+
+export function broadcastAttendanceUpdate(eventId: string, studentId: string, xpGained: number) {
+  io?.emit("event:attendance_update", { eventId, studentId, xpGained });
 }
