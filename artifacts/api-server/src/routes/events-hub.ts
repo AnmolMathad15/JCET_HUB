@@ -7,6 +7,7 @@ import {
 import { eq, desc, asc, sql, and, ne } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth";
 import { randomUUID } from "crypto";
+import { broadcastEventRegistration, broadcastAttendanceUpdate } from "../socket";
 
 const router = Router();
 
@@ -195,6 +196,10 @@ router.post("/events-hub/:id/register", requireAuth, async (req, res) => {
       additionalInfo,
       qrToken: randomUUID(), status: "registered", registeredAt: new Date(),
     }).returning();
+
+    const newCount = await db.select({ c: sql<number>`count(*)` }).from(eventRegistrationsTable).where(eq(eventRegistrationsTable.eventId, req.params.id));
+    broadcastEventRegistration(req.params.id, Number(newCount[0].c), 1);
+
     res.json(reg[0]);
   } catch (err) {
     console.error(err);
@@ -207,6 +212,8 @@ router.delete("/events-hub/:id/register", requireAuth, async (req, res) => {
     const user = (req as any).user;
     await db.delete(eventRegistrationsTable)
       .where(and(eq(eventRegistrationsTable.eventId, req.params.id), eq(eventRegistrationsTable.studentId, user.id)));
+    const newCount = await db.select({ c: sql<number>`count(*)` }).from(eventRegistrationsTable).where(eq(eventRegistrationsTable.eventId, req.params.id));
+    broadcastEventRegistration(req.params.id, Number(newCount[0].c), -1);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: "Failed to unregister" });
@@ -244,6 +251,7 @@ router.post("/events-hub/:id/attendance/:regId", requireAuth, async (req, res) =
     const event = await db.select().from(eventsTable).where(eq(eventsTable.id, req.params.id)).limit(1);
     if (event.length) {
       await awardPointsAndBadges(reg[0].studentId, event[0].id, event[0].xpReward, `Attended: ${event[0].title}`, event[0].type);
+      broadcastAttendanceUpdate(req.params.id, reg[0].studentId, event[0].xpReward);
     }
     res.json({ success: true });
   } catch (err) {

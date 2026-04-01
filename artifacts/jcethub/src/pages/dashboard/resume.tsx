@@ -1,8 +1,8 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Layout from "@/components/layout";
 import { useApiGet } from "@/lib/api";
 import { getUser } from "@/lib/auth";
-import { Download, Printer, Star, Zap, Award, Briefcase, Code2, Users, BookOpen } from "lucide-react";
+import { Download, Printer, Star, Zap, Award, Briefcase, Code2, Users, BookOpen, Loader2 } from "lucide-react";
 
 interface ResumeData {
   student: { name: string; usn: string; branch: string | null; email: string | null; phone: string | null; role: string; } | null;
@@ -32,6 +32,7 @@ export default function ResumeBuilder() {
   const user = getUser();
   const { data, isLoading } = useApiGet<ResumeData>("/resume-data");
   const printRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
 
   const handlePrint = () => {
     const content = printRef.current?.innerHTML;
@@ -65,6 +66,41 @@ export default function ResumeBuilder() {
     setTimeout(() => w.print(), 500);
   };
 
+  const handleDownloadPDF = async () => {
+    if (!printRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+        import("jspdf"),
+        import("html2canvas"),
+      ]);
+      const canvas = await html2canvas(printRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      let y = 0;
+      while (y < pdfHeight) {
+        if (y > 0) pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, -y, pdfWidth, pdfHeight);
+        y += pageHeight;
+      }
+      const name = data?.student?.name?.replace(/\s+/g, "_") ?? "Student";
+      pdf.save(`${name}_JCET_Resume.pdf`);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      alert("PDF generation failed. Please use the Print option instead.");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   if (isLoading) {
     return <Layout title="Resume Builder"><div className="p-8 text-center text-gray-400">Loading your resume data...</div></Layout>;
   }
@@ -92,9 +128,17 @@ export default function ResumeBuilder() {
             </h2>
             <p className="text-sm text-gray-400">Auto-generated from your verified campus activity record</p>
           </div>
-          <div className="flex gap-2">
-            <button onClick={handlePrint} className="flex items-center gap-2 bg-[#1a237e] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#283593]">
-              <Printer className="w-4 h-4" /> Print / Export PDF
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={handleDownloadPDF}
+              disabled={downloading || (eventsAttended.length === 0 && badges.length === 0)}
+              className="flex items-center gap-2 bg-[#1a237e] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#283593] disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+            >
+              {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {downloading ? "Generating PDF..." : "Download PDF"}
+            </button>
+            <button onClick={handlePrint} className="flex items-center gap-2 border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
+              <Printer className="w-4 h-4" /> Print View
             </button>
           </div>
         </div>
