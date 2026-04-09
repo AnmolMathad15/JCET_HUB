@@ -14,3 +14,5 @@ export * from "./submissions";
 export * from "./event-registrations";
 export * from "./campus-points";
 export * from "./badges";
+export * from "./attendance-sessions";
+export * from "./attendance-records";
