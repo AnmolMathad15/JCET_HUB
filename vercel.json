@@ -1,0 +1,5 @@
+{
+  "buildCommand": "pnpm --filter @workspace/db run build && pnpm --filter @workspace/api-zod run build && pnpm --filter @workspace/api-server run build",
+  "outputDirectory": "artifacts/api-server/dist",
+  "installCommand": "pnpm install"
+}
