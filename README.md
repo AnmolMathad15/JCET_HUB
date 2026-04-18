@@ -31,14 +31,14 @@ JCET Hub is a full-stack smart campus platform designed to streamline college op
 - REST APIs for communication
 - WebSockets for live updates
 - PostgreSQL for data persistence
+
+https://github.com/user-attachments/assets/7dbcb447-e889-442d-a2d1-7c6bbe3d1378
+
+
+
+
 - Modular backend for scalability
 
 ---
 
-## 🚀 Getting Started
 
-```bash
-git clone https://github.com/AnmolMathad15/JCET_HUB
-cd JCET_HUB
-npm install
-npm run dev
