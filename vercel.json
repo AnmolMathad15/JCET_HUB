@@ -1,5 +1,4 @@
 {
-  "version": 2,
   "installCommand": "pnpm install",
   "buildCommand": "pnpm --filter @workspace/jcethub run build",
   "outputDirectory": "artifacts/jcethub/dist/public",
