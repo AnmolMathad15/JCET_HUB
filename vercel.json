@@ -1,6 +1,6 @@
 {
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm --filter @workspace/jcethub run build",
+  "buildCommand": "pnpm --filter @workspace/jcethub run build && cp -r artifacts/jcethub/dist .",
   "outputDirectory": "dist",
   "functions": {
     "api/index.ts": {
