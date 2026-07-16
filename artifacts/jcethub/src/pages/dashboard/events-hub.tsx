@@ -147,6 +147,8 @@ export default function EventsHub() {
 
   useEffect(() => {
     const sock = connectSocket();
+    // sock is null in serverless production deployments (no persistent socket server)
+    if (!sock) return;
     const onConnect = () => setSocketConnected(true);
     const onDisconnect = () => setSocketConnected(false);
     const onRegUpdate = (data: { eventId: string; count: number }) => {
