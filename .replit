@@ -4,6 +4,9 @@ modules = ["nodejs-20", "web", "bash", "postgresql-16"]
 id = "artifacts/api-server"
 
 [[artifacts]]
+id = "artifacts/jcethub"
+
+[[artifacts]]
 id = "artifacts/mockup-sandbox"
 
 [deployment]
@@ -57,12 +60,3 @@ waitForPort = 19904
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true
-
-[postMerge]
-path = "scripts/post-merge.sh"
-timeoutMs = 20000
-
-[nix]
-channel = "stable-25_05"
-
-# update
